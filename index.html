@@ -42,25 +42,26 @@ body{background:var(--hueso);color:var(--tinta);font-family:"Jost",system-ui,san
 .blk-h h2{font-family:"Bodoni Moda",serif;font-weight:400;font-size:18px}
 .blk-h .tot{font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap;color:var(--tinta2)}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.grid{width:100%;border-collapse:collapse;table-layout:fixed}
-table.grid th,table.grid td{padding-right:16px}
+table.grid{width:auto;min-width:100%;border-collapse:collapse;table-layout:fixed}
+table.grid th,table.grid td{padding-right:22px;overflow:hidden}
 table.grid th:last-child,table.grid td:last-child{padding-right:0}
-table.grid col.w-cls{width:104px}
-table.grid col.w-ref{width:86px}
+table.grid input,table.grid select{max-width:100%}
+table.grid col.w-cls{width:104px}   table.grid col.w-con{width:230px}
+table.grid col.w-ent{width:180px}   table.grid col.w-ref{width:86px}
 table.grid col.w-fec{width:124px}   table.grid col.w-val{width:126px}
-table.grid col.w-sop{width:110px}   table.grid col.w-tas{width:66px}
-table.grid col.w-cuo{width:112px}   table.grid col.w-mes{width:56px}
-table.grid col.w-gar{width:112px}   table.grid col.w-nat{width:94px}
+table.grid col.w-sop{width:110px}   table.grid col.w-tas{width:76px}
+table.grid col.w-cuo{width:122px}   table.grid col.w-mes{width:112px}
+table.grid col.w-gar{width:128px}   table.grid col.w-nat{width:94px}
 table.grid col.w-per{width:104px}   table.grid col.w-mzd{width:112px}
 table.grid col.w-est{width:104px}   table.grid col.w-del{width:30px}
-table.grid col.w-con,table.grid col.w-ent{width:auto;min-width:150px}
 .scroll{position:relative}
 .scroll::after{content:'';position:absolute;top:0;right:0;bottom:0;width:26px;
   background:linear-gradient(to right,rgba(245,242,234,0),rgba(245,242,234,.92));pointer-events:none}
 @media (max-width:820px){.blk-h::after{content:'desplace la tabla a los lados';
   font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta3);
   flex-basis:100%;padding-top:4px}}
-table.grid th{text-align:left;padding:10px 8px 7px 0;border-bottom:1px solid var(--pelo);white-space:nowrap}
+table.grid th{text-align:left;padding:10px 8px 7px 0;border-bottom:1px solid var(--pelo);
+  white-space:normal;line-height:1.35;vertical-align:bottom;hyphens:none}
 table.grid th.n{text-align:right;padding-right:0}
 table.grid td{padding:0;border-bottom:1px solid var(--pelo2)}
 table.grid input,table.grid select{width:100%;min-width:0;border:none;background:transparent;
@@ -242,15 +243,16 @@ table.rep tr.sum td.n{font-size:16px}
   padding-bottom:20px;margin-bottom:26px;border-bottom:1px solid var(--pelo);flex-wrap:wrap}
 .tab-h h3{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(21px,4.4vw,27px);letter-spacing:-.014em}
 .tab-h .fch{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--tinta3)}
-.tab-top{display:grid;grid-template-columns:1.06fr 1fr;gap:0 34px;align-items:center;margin-bottom:30px}
+.tab-top{display:grid;grid-template-columns:264px 1fr;gap:0 46px;align-items:center;margin-bottom:32px}
 .tab-veredicto{border-left:2px solid var(--bronce);padding:2px 0 2px 18px}
 .tab-veredicto .et{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--bronce);margin-bottom:9px}
-.tab-veredicto p{font-size:15px;line-height:1.6;color:var(--tinta2);margin:0;max-width:none}
+.tab-veredicto p{font-size:15.5px;line-height:1.62;color:var(--tinta2);margin:0;max-width:46ch}
 .tab-veredicto b{font-weight:500;color:var(--tinta)}
-.tab-cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));
-  border-top:1px solid var(--pelo);margin-bottom:28px}
-.tc{padding:16px 18px 16px 0;border-right:1px solid var(--pelo2);border-bottom:1px solid var(--pelo);min-width:0}
-.tc:last-child{border-right:none}
+.tab-cifras{display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--pelo);margin-bottom:30px}
+.tc{padding:17px 20px 17px 0;border-right:1px solid var(--pelo2);
+  border-bottom:1px solid var(--pelo);min-width:0}
+.tc:nth-child(3n){border-right:none;padding-right:0}
 .tc dt{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta3);margin-bottom:7px}
 .tc dd{font-family:"Bodoni Moda",serif;font-size:clamp(19px,3.6vw,25px);letter-spacing:-.018em;
   font-variant-numeric:tabular-nums;line-height:1.05;word-break:break-word}
@@ -260,12 +262,15 @@ table.rep tr.sum td.n{font-size:16px}
 .tab-g figure{margin-bottom:22px}
 @media (max-width:780px){
   .tab-top,.tab-g{grid-template-columns:1fr;gap:0}
-  .tab-veredicto{margin-top:20px}
+  .tab-veredicto{margin-top:24px}
+  .tab-veredicto p{max-width:none}
 }
 @media (max-width:620px){
   .tab{padding-top:26px}
   .tab-cifras{grid-template-columns:1fr 1fr}
   .tc{padding:13px 12px 13px 0}
+  .tc:nth-child(3n){border-right:1px solid var(--pelo2);padding-right:12px}
+  .tc:nth-child(2n){border-right:none;padding-right:0}
 }
 @media print{
   .tab{break-inside:avoid;break-after:page;background:#fff;padding-top:0}
@@ -367,11 +372,11 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué posee?</h2><span class="tot" id="tActivos">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:864px"><colgroup><col class="w-cls"><col class="w-con"><col class="w-ent"><col class="w-ref"><col class="w-fec"><col class="w-val"><col class="w-sop"><col class="w-del"></colgroup><thead><tr>
-      <th class="sc">Clase</th><th class="sc">Concepto</th>
-      <th class="sc">Entidad</th><th class="sc">Referencia</th>
-      <th class="sc">Valorado a</th><th class="sc n">Valor</th>
-      <th class="sc">Soporte</th><th style="width:22px"></th>
+    <div class="scroll"><table class="grid" style="min-width:1144px"><colgroup><col class="w-cls"><col class="w-con"><col class="w-ent"><col class="w-ref"><col class="w-fec"><col class="w-val"><col class="w-sop"><col class="w-del"></colgroup><thead><tr>
+      <th class="sc">Clase</th><th class="sc">Qué es</th>
+      <th class="sc">Dónde está</th><th class="sc">N.º cuenta</th>
+      <th class="sc">Valor a la fecha</th><th class="sc n">Cuánto vale</th>
+      <th class="sc">Soporte</th><th></th>
     </tr></thead><tbody id="gAct"></tbody></table></div>
     <button class="add" data-add="activos">Añadir activo</button>
     <p class="note">La clase determina el tratamiento analítico. <b>Líquido</b> es lo que puede usar mañana sin perder valor y alimenta la reserva de emergencia; <b>Inversión</b> y <b>Productivo</b> son los bienes que generan renta; <b>Uso personal</b> se excluye de ambos cálculos porque no produce ni se vende con facilidad.</p>
@@ -379,22 +384,22 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué debe?</h2><span class="tot" id="tPasivos">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:1062px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ref"><col class="w-val"><col class="w-tas"><col class="w-cuo"><col class="w-mes"><col class="w-gar"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:1190px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ref"><col class="w-val"><col class="w-tas"><col class="w-cuo"><col class="w-mes"><col class="w-gar"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Acreedor</th><th class="sc">Tipo</th>
-      <th class="sc">Obligación</th><th class="sc n">Saldo</th>
-      <th class="sc n">Tasa EA</th><th class="sc n">Cuota</th>
-      <th class="sc n">Meses</th><th class="sc">Garantía</th><th style="width:22px"></th>
+      <th class="sc">N.º obligación</th><th class="sc n">Saldo actual</th>
+      <th class="sc n">Tasa EA</th><th class="sc n">Cuota al mes</th>
+      <th class="sc n">Meses que faltan</th><th class="sc">Garantía</th><th></th>
     </tr></thead><tbody id="gPas"></tbody></table></div>
     <button class="add" data-add="pasivos">Añadir pasivo</button>
-    <p class="note">La tasa va en efectivo anual: escriba 28,5 para 28,5%. Es el dato más importante de toda la tabla, porque determina cuál deuda conviene pagar primero. Con la cuota se calcula además en cuántos meses queda libre de cada obligación.</p>
+    <p class="note"><b>Saldo actual</b> es lo que debe hoy, no lo que le prestaron. <b>Tasa EA</b> va en efectivo anual: escriba 28,5 para 28,5%; aparece en el extracto y es el dato que determina cuál deuda conviene pagar primero. <b>Cuota al mes</b> es lo que paga cada mes por esa obligación. <b>Meses que faltan</b> es cuántas cuotas quedan pendientes hasta terminar de pagarla.</p>
   </div>
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué entra cada mes?</h2><span class="tot" id="tIng">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:900px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
-      <th class="sc">Concepto</th><th class="sc">Pagador</th>
-      <th class="sc">Naturaleza</th><th class="sc">Periodicidad</th>
-      <th class="sc n">Valor</th><th class="sc n">Al mes</th><th style="width:22px"></th>
+    <div class="scroll"><table class="grid" style="min-width:1008px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
+      <th class="sc">Qué recibe</th><th class="sc">Quién le paga</th>
+      <th class="sc">¿Es fijo?</th><th class="sc">Cada cuánto</th>
+      <th class="sc n">Cuánto recibe</th><th class="sc n">Equivale al mes</th><th></th>
     </tr></thead><tbody id="gIng"></tbody></table></div>
     <button class="add" data-add="ingresos">Añadir ingreso</button>
     <p class="note">Registre el valor tal como lo recibe y elija cada cuánto. Una prima semestral se digita completa con periodicidad semestral y el sistema la convierte a su equivalente mensual.</p>
@@ -402,10 +407,10 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué sale cada mes?</h2><span class="tot" id="tEgr">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:900px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
-      <th class="sc">Categoría</th><th class="sc">Concepto</th>
-      <th class="sc">Naturaleza</th><th class="sc">Periodicidad</th>
-      <th class="sc n">Valor</th><th class="sc n">Al mes</th><th style="width:22px"></th>
+    <div class="scroll"><table class="grid" style="min-width:1008px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
+      <th class="sc">Categoría</th><th class="sc">En qué gasta</th>
+      <th class="sc">¿Es fijo?</th><th class="sc">Cada cuánto</th>
+      <th class="sc n">Cuánto paga</th><th class="sc n">Equivale al mes</th><th></th>
     </tr></thead><tbody id="gEgr"></tbody></table></div>
     <button class="add" data-add="egresos">Añadir egreso</button>
     <p class="note">No incluya cuotas de deuda: se toman de la tabla de pasivos para no contarlas dos veces. Las obligaciones anuales —predial, seguros, matrículas— sí van aquí con su periodicidad.</p>
@@ -413,10 +418,10 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Con qué documentos lo respalda?</h2><span class="tot" id="tSop">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:790px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ent"><col class="w-fec"><col class="w-est"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:882px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ent"><col class="w-fec"><col class="w-est"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Documento</th><th class="sc">Tipo</th>
-      <th class="sc">Entidad emisora</th><th class="sc">Fecha</th>
-      <th class="sc">Estado</th><th style="width:22px"></th>
+      <th class="sc">Quién lo emitió</th><th class="sc">Fecha</th>
+      <th class="sc">¿Ya lo tiene?</th><th></th>
     </tr></thead><tbody id="gSop"></tbody></table></div>
     <button class="add" data-add="soportes">Añadir soporte</button>
     <p class="note">Relación de los documentos que respaldan las cifras. Se imprime como anexo al final del informe y es lo que permite defender cada valor ante un banco, un socio o una autoridad. Los archivos se conservan aparte; aquí solo se deja constancia de cuáles existen y cuáles faltan.</p>
@@ -474,10 +479,10 @@ const VACIO={
 ['activos','pasivos','ingresos','egresos','soportes'].forEach(k=>{for(let i=0;i<3;i++)D[k].push(JSON.parse(JSON.stringify(VACIO[k])))});
 
 /* ══ EDITOR ══ */
-const mny=v=>`<input class="mny" inputmode="numeric" placeholder="0" value="${v==null?'':nf.format(v)}">`;
+const mny=(v,ph)=>`<input class="mny" inputmode="numeric" placeholder="${ph||'0'}" value="${v==null?'':nf.format(v)}">`;
 const pct=v=>`<input class="n" inputmode="decimal" placeholder="—" value="${v==null?'':nf1.format(v)}">`;
 const tx=(v,ph,dl)=>`<input placeholder="${ph||''}" value="${esc(v)}"${dl?` list="${dl}"`:''}>`;
-const num=v=>`<input class="n" type="number" step="1" placeholder="—" value="${v==null?'':v}">`;
+const num=(v,ph)=>`<input class="n" type="number" step="1" placeholder="${ph||'—'}" value="${v==null?'':v}">`;
 const dt=v=>`<input type="date" value="${esc(v)}">`;
 const sl=(v,o)=>`<select>${o.map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')}</select>`;
 
@@ -497,19 +502,19 @@ const MZ=`style="text-align:right;font-variant-numeric:tabular-nums;font-size:13
 
 function pintarTablas(){
   $('#gAct').innerHTML=D.activos.map((a,i)=>`<tr data-k="activos" data-i="${i}"><td>${sl(a.clase,CLASES)}</td>
-    <td>${tx(a.concepto,'Concepto','dlActivo')}</td><td>${tx(a.entidad,'Entidad','dlEntidad')}</td>
-    <td>${tx(a.ref,'N.º')}</td><td>${dt(a.fecha)}</td><td>${mny(a.valor)}</td><td>${sl(a.soporte,SOP)}</td>
+    <td>${tx(a.concepto,'Cuenta, casa, carro…','dlActivo')}</td><td>${tx(a.entidad,'Banco o ubicación','dlEntidad')}</td>
+    <td>${tx(a.ref,'opcional')}</td><td>${dt(a.fecha)}</td><td>${mny(a.valor)}</td><td>${sl(a.soporte,SOP)}</td>
     <td><button class="del">×</button></td></tr>`).join('');
   $('#gPas').innerHTML=D.pasivos.map((p,i)=>`<tr data-k="pasivos" data-i="${i}">
-    <td>${tx(p.acreedor,'Acreedor','dlAcreedor')}</td><td>${sl(p.tipo,TIPOS)}</td><td>${tx(p.ref,'N.º')}</td>
-    <td>${mny(p.saldo)}</td><td>${pct(p.tasa)}</td><td>${mny(p.cuota)}</td><td>${num(p.meses)}</td>
+    <td>${tx(p.acreedor,'Banco o entidad','dlAcreedor')}</td><td>${sl(p.tipo,TIPOS)}</td><td>${tx(p.ref,'opcional')}</td>
+    <td>${mny(p.saldo,'lo que debe hoy')}</td><td>${pct(p.tasa)}</td><td>${mny(p.cuota,'lo que paga')}</td><td>${num(p.meses,'faltan')}</td>
     <td>${sl(p.garantia,GAR)}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gIng').innerHTML=D.ingresos.map((g,i)=>`<tr data-k="ingresos" data-i="${i}">
-    <td>${tx(g.concepto,'Concepto','dlIngreso')}</td><td>${tx(g.fuente,'Pagador','dlPagador')}</td>
+    <td>${tx(g.concepto,'Salario, arriendo…','dlIngreso')}</td><td>${tx(g.fuente,'Empresa o persona','dlPagador')}</td>
     <td>${sl(g.nat,NAT_I)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
     <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gEgr').innerHTML=D.egresos.map((g,i)=>`<tr data-k="egresos" data-i="${i}">
-    <td>${tx(g.cat,'Categoría','dlCatEgreso')}</td><td>${tx(g.concepto,'Concepto','dlEgreso')}</td>
+    <td>${tx(g.cat,'Vivienda, salud…','dlCatEgreso')}</td><td>${tx(g.concepto,'Arriendo, mercado…','dlEgreso')}</td>
     <td>${sl(g.nat,NAT_E)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
     <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gSop').innerHTML=D.soportes.map((s,i)=>`<tr data-k="soportes" data-i="${i}">
@@ -716,14 +721,14 @@ function gIndic(IND){
 
 /* ══════ TABLERO EJECUTIVO ══════ */
 
-/* Termómetro de salud financiera: arco graduado con aguja */
+/* Índice de posición: anillo de progreso con cifra al centro */
 function gAguja(k){
   const dims=[
-    {n:'Reserva',    v:k.aut,    ok:6,   inv:false},
-    {n:'Ahorro',     v:k.ahorro, ok:.15, inv:false},
-    {n:'Deuda',      v:k.carga,  ok:.20, inv:true},
-    {n:'Solidez',    v:k.endeud, ok:.40, inv:true},
-    {n:'Renta',      v:k.partP,  ok:.30, inv:false}
+    {n:'Reserva', v:k.aut,    ok:6,   inv:false},
+    {n:'Ahorro',  v:k.ahorro, ok:.15, inv:false},
+    {n:'Deuda',   v:k.carga,  ok:.20, inv:true},
+    {n:'Solidez', v:k.endeud, ok:.40, inv:true},
+    {n:'Renta',   v:k.partP,  ok:.30, inv:false}
   ].filter(d=>d.v!=null);
   if(!dims.length)return {svg:'',score:null};
   let s=0;
@@ -731,26 +736,35 @@ function gAguja(k){
     const r=d.inv? d.ok/Math.max(d.v,1e-9) : d.v/d.ok;
     s+=Math.max(0,Math.min(r,1));
   });
-  const score=s/dims.length;                       // 0 a 1
-  const W=470,cx=235,cy=182,R=140,SW=26;
-  const A0=Math.PI, A1=0;                          // semicírculo
-  const ang=a=>A0+(A1-A0)*a;
-  const pt=(a,r)=>[cx+r*Math.cos(ang(a)),cy+r*Math.sin(ang(a))];
-  const arco=(a,b,r)=>{const [x0,y0]=pt(a,r),[x1,y1]=pt(b,r);
-    return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`};
-  const zonas=[[0,.34,'#78302A'],[.34,.67,'#8A6A20'],[.67,1,'#3A5A46']];
-  let g=zonas.map(([a,b,c])=>`<path d="${arco(a,b,R)}" fill="none" stroke="${c}" stroke-width="${SW}" opacity=".17"/>`).join('');
-  g+=`<path d="${arco(0,score,R)}" fill="none" stroke="${score<.34?'#78302A':score<.67?'#8A6A20':'#3A5A46'}" stroke-width="${SW}"/>`;
-  for(let i=0;i<=10;i++){const [x0,y0]=pt(i/10,R+SW/2+3),[x1,y1]=pt(i/10,R+SW/2+(i%5?6:11));
-    g+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${PELO}" stroke-width="${i%5?.5:.9}"/>`}
-  const [ax,ay]=pt(score,R-SW/2-9);
-  g+=`<line x1="${cx}" y1="${cy}" x2="${ax.toFixed(1)}" y2="${ay.toFixed(1)}" stroke="${INK}" stroke-width="1.7"/>
-      <circle cx="${cx}" cy="${cy}" r="6" fill="${INK}"/><circle cx="${cx}" cy="${cy}" r="2.4" fill="${BG}"/>`;
-  g+=`<text x="${cx}" y="${cy-46}" text-anchor="middle" font-family="Bodoni Moda, serif" font-size="46" fill="${INK}">${Math.round(score*100)}</text>
-      <text x="${cx}" y="${cy-26}" text-anchor="middle" font-size="8.5" letter-spacing=".26em" fill="${T3}">SOBRE 100</text>
-      <text x="${cx-R}" y="${cy+22}" text-anchor="middle" font-size="9" fill="${T3}">frágil</text>
-      <text x="${cx+R}" y="${cy+22}" text-anchor="middle" font-size="9" fill="${T3}">sólida</text>`;
-  return {svg:`<svg class="viz" viewBox="0 0 ${W} 210" role="img">${g}</svg>`,score,dims};
+  const score=s/dims.length;
+  const cum=dims.filter(d=>{const r=d.inv? d.ok/Math.max(d.v,1e-9) : d.v/d.ok; return r>=1}).length;
+
+  const cx=132,cy=132,R=98,SW=15;
+  const CC=2*Math.PI*R;
+  const col=score<.34?'#78302A':score<.67?'#8A6A20':'#3A5A46';
+  const avance=CC*score;
+
+  // marcas de graduación cada 10%
+  let ticks='';
+  for(let i=0;i<=100;i+=10){
+    const a=(-90+i*3.6)*Math.PI/180, r0=R+SW/2+5, r1=R+SW/2+(i%50?8:12);
+    ticks+=`<line x1="${(cx+r0*Math.cos(a)).toFixed(1)}" y1="${(cy+r0*Math.sin(a)).toFixed(1)}"
+      x2="${(cx+r1*Math.cos(a)).toFixed(1)}" y2="${(cy+r1*Math.sin(a)).toFixed(1)}"
+      stroke="${PELO}" stroke-width="${i%50?.5:.9}"/>`;
+  }
+  return {svg:`<svg class="viz" viewBox="0 0 264 268" role="img" style="max-width:264px;margin:0 auto">
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#E7E2D5" stroke-width="${SW}"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${col}" stroke-width="${SW}"
+      stroke-linecap="butt" stroke-dasharray="${avance.toFixed(1)} ${(CC-avance).toFixed(1)}"
+      transform="rotate(-90 ${cx} ${cy})"/>
+    <circle cx="${cx}" cy="${cy}" r="${R-SW/2-7}" fill="none" stroke="${PELO}" stroke-width=".5"/>
+    ${ticks}
+    <text x="${cx}" y="${cy+4}" text-anchor="middle" font-family="Bodoni Moda, serif"
+      font-size="60" fill="${INK}">${Math.round(score*100)}</text>
+    <text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="8.5" letter-spacing=".26em" fill="${T3}">SOBRE 100</text>
+    <text x="${cx}" y="${cy+46}" text-anchor="middle" font-size="10.5" fill="${T2}">${cum} de ${dims.length} en rango</text>
+    <text x="${cx}" y="258" text-anchor="middle" font-size="8.5" letter-spacing=".2em" fill="${T3}">ÍNDICE DE POSICIÓN</text>
+  </svg>`, score, dims};
 }
 
 /* Radar de las cinco dimensiones */
@@ -963,10 +977,9 @@ function generar(){
     </div>
 
     <div class="tab-top">
-      <figure style="margin:0">${aguja.svg}
-        <p class="fn" style="text-align:center;margin-top:2px">Índice compuesto de cinco dimensiones frente a los estándares de planeación financiera.</p></figure>
+      <figure style="margin:0">${aguja.svg}</figure>
       <div class="tab-veredicto"><p class="et">Lectura general</p>
-        <p>${(function(){
+        <p style="margin-bottom:14px">${(function(){
     const s=aguja.score;
     if(s==null)return 'Cargue más información para obtener una lectura general de la posición.';
     if(s>=.75)return `La posición es <b>sólida</b>. Los indicadores se ubican en su mayoría dentro de los rangos recomendables, y el trabajo por delante es de optimización más que de corrección.`;
@@ -1151,4 +1164,3 @@ pintarMeta();pintarTablas();
 </script>
 </body>
 </html>
-
