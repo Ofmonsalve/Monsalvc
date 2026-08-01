@@ -43,17 +43,19 @@ body{background:var(--hueso);color:var(--tinta);font-family:"Jost",system-ui,san
 .blk-h .tot{font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap;color:var(--tinta2)}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.grid{width:auto;min-width:100%;border-collapse:collapse;table-layout:fixed}
-table.grid th,table.grid td{padding-right:22px;overflow:hidden}
+table.grid th{padding-right:14px}
+table.grid td{padding-right:14px}
 table.grid th:last-child,table.grid td:last-child{padding-right:0}
+table.grid td{padding-top:4px;padding-bottom:4px}
 table.grid input,table.grid select{max-width:100%}
-table.grid col.w-cls{width:104px}   table.grid col.w-con{width:230px}
-table.grid col.w-ent{width:180px}   table.grid col.w-ref{width:86px}
-table.grid col.w-fec{width:124px}   table.grid col.w-val{width:126px}
-table.grid col.w-sop{width:110px}   table.grid col.w-tas{width:76px}
-table.grid col.w-cuo{width:122px}   table.grid col.w-mes{width:112px}
-table.grid col.w-gar{width:128px}   table.grid col.w-nat{width:94px}
-table.grid col.w-per{width:104px}   table.grid col.w-mzd{width:112px}
-table.grid col.w-est{width:104px}   table.grid col.w-del{width:30px}
+table.grid col.w-cls{width:112px}   table.grid col.w-con{width:215px}
+table.grid col.w-ent{width:170px}   table.grid col.w-ref{width:84px}
+table.grid col.w-fec{width:136px}   table.grid col.w-val{width:134px}
+table.grid col.w-sop{width:118px}   table.grid col.w-tas{width:84px}
+table.grid col.w-cuo{width:128px}   table.grid col.w-mes{width:118px}
+table.grid col.w-gar{width:126px}   table.grid col.w-nat{width:102px}
+table.grid col.w-per{width:112px}   table.grid col.w-mzd{width:118px}
+table.grid col.w-est{width:112px}   table.grid col.w-del{width:28px}
 .scroll{position:relative}
 .scroll::after{content:'';position:absolute;top:0;right:0;bottom:0;width:26px;
   background:linear-gradient(to right,rgba(245,242,234,0),rgba(245,242,234,.92));pointer-events:none}
@@ -64,11 +66,13 @@ table.grid th{text-align:left;padding:10px 8px 7px 0;border-bottom:1px solid var
   white-space:normal;line-height:1.35;vertical-align:bottom;hyphens:none}
 table.grid th.n{text-align:right;padding-right:0}
 table.grid td{padding:0;border-bottom:1px solid var(--pelo2)}
-table.grid input,table.grid select{width:100%;min-width:0;border:none;background:transparent;
-  font-family:"Jost";font-weight:300;font-size:13.5px;color:var(--tinta);padding:10px 8px 10px 0}
+table.grid input,table.grid select{width:100%;min-width:0;border:1px solid transparent;
+  background:#FFFDF7;font-family:"Jost";font-weight:300;font-size:14px;color:var(--tinta);
+  padding:10px 9px;border-radius:2px}
+table.grid input:hover,table.grid select:hover{border-color:var(--pelo)}
 table.grid input[type=date]{font-size:12.5px}
-table.grid input.n,table.grid input.mny{text-align:right;font-variant-numeric:tabular-nums;padding-right:0}
-table.grid input:focus,table.grid select:focus{outline:none;background:#FFFDF6;box-shadow:inset 0 -1px 0 var(--bronce)}
+table.grid input.n,table.grid input.mny{text-align:right;font-variant-numeric:tabular-nums}
+table.grid input:focus,table.grid select:focus{outline:none;border-color:var(--bronce);background:#fff}
 table.grid input::placeholder{color:#BDB5A7}
 table.grid select{cursor:pointer}
 .del{background:none;border:none;color:#C4BCAE;cursor:pointer;font-size:15px;padding:6px 0 6px 8px;line-height:1}
@@ -372,10 +376,10 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué posee?</h2><span class="tot" id="tActivos">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:1144px"><colgroup><col class="w-cls"><col class="w-con"><col class="w-ent"><col class="w-ref"><col class="w-fec"><col class="w-val"><col class="w-sop"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:1095px"><colgroup><col class="w-cls"><col class="w-con"><col class="w-ent"><col class="w-ref"><col class="w-fec"><col class="w-val"><col class="w-sop"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Clase</th><th class="sc">Qué es</th>
-      <th class="sc">Dónde está</th><th class="sc">N.º cuenta</th>
-      <th class="sc">Valor a la fecha</th><th class="sc n">Cuánto vale</th>
+      <th class="sc">Dónde está</th><th class="sc">N.º</th>
+      <th class="sc">Valorado el</th><th class="sc n">Cuánto vale</th>
       <th class="sc">Soporte</th><th></th>
     </tr></thead><tbody id="gAct"></tbody></table></div>
     <button class="add" data-add="activos">Añadir activo</button>
@@ -384,11 +388,11 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué debe?</h2><span class="tot" id="tPasivos">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:1190px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ref"><col class="w-val"><col class="w-tas"><col class="w-cuo"><col class="w-mes"><col class="w-gar"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:1141px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ref"><col class="w-val"><col class="w-tas"><col class="w-cuo"><col class="w-mes"><col class="w-gar"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Acreedor</th><th class="sc">Tipo</th>
-      <th class="sc">N.º obligación</th><th class="sc n">Saldo actual</th>
-      <th class="sc n">Tasa EA</th><th class="sc n">Cuota al mes</th>
-      <th class="sc n">Meses que faltan</th><th class="sc">Garantía</th><th></th>
+      <th class="sc">N.º</th><th class="sc n">Saldo hoy</th>
+      <th class="sc n">Tasa EA</th><th class="sc n">Cuota mes</th>
+      <th class="sc n">Cuotas que faltan</th><th class="sc">Garantía</th><th></th>
     </tr></thead><tbody id="gPas"></tbody></table></div>
     <button class="add" data-add="pasivos">Añadir pasivo</button>
     <p class="note"><b>Saldo actual</b> es lo que debe hoy, no lo que le prestaron. <b>Tasa EA</b> va en efectivo anual: escriba 28,5 para 28,5%; aparece en el extracto y es el dato que determina cuál deuda conviene pagar primero. <b>Cuota al mes</b> es lo que paga cada mes por esa obligación. <b>Meses que faltan</b> es cuántas cuotas quedan pendientes hasta terminar de pagarla.</p>
@@ -396,7 +400,7 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué entra cada mes?</h2><span class="tot" id="tIng">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:1008px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:963px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Qué recibe</th><th class="sc">Quién le paga</th>
       <th class="sc">¿Es fijo?</th><th class="sc">Cada cuánto</th>
       <th class="sc n">Cuánto recibe</th><th class="sc n">Equivale al mes</th><th></th>
@@ -407,7 +411,7 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Qué sale cada mes?</h2><span class="tot" id="tEgr">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:1008px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:963px"><colgroup><col class="w-con"><col class="w-ent"><col class="w-nat"><col class="w-per"><col class="w-val"><col class="w-mzd"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Categoría</th><th class="sc">En qué gasta</th>
       <th class="sc">¿Es fijo?</th><th class="sc">Cada cuánto</th>
       <th class="sc n">Cuánto paga</th><th class="sc n">Equivale al mes</th><th></th>
@@ -418,7 +422,7 @@ table.rep tr.sum td.n{font-size:16px}
 
   <div class="blk">
     <div class="blk-h"><h2>¿Con qué documentos lo respalda?</h2><span class="tot" id="tSop">—</span></div>
-    <div class="scroll"><table class="grid" style="min-width:882px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ent"><col class="w-fec"><col class="w-est"><col class="w-del"></colgroup><thead><tr>
+    <div class="scroll"><table class="grid" style="min-width:843px"><colgroup><col class="w-con"><col class="w-cls"><col class="w-ent"><col class="w-fec"><col class="w-est"><col class="w-del"></colgroup><thead><tr>
       <th class="sc">Documento</th><th class="sc">Tipo</th>
       <th class="sc">Quién lo emitió</th><th class="sc">Fecha</th>
       <th class="sc">¿Ya lo tiene?</th><th></th>
@@ -502,19 +506,19 @@ const MZ=`style="text-align:right;font-variant-numeric:tabular-nums;font-size:13
 
 function pintarTablas(){
   $('#gAct').innerHTML=D.activos.map((a,i)=>`<tr data-k="activos" data-i="${i}"><td>${sl(a.clase,CLASES)}</td>
-    <td>${tx(a.concepto,'Cuenta, casa, carro…','dlActivo')}</td><td>${tx(a.entidad,'Banco o ubicación','dlEntidad')}</td>
+    <td>${tx(a.concepto,'Cuenta, casa, carro','dlActivo')}</td><td>${tx(a.entidad,'Banco o ubicación','dlEntidad')}</td>
     <td>${tx(a.ref,'opcional')}</td><td>${dt(a.fecha)}</td><td>${mny(a.valor)}</td><td>${sl(a.soporte,SOP)}</td>
     <td><button class="del">×</button></td></tr>`).join('');
   $('#gPas').innerHTML=D.pasivos.map((p,i)=>`<tr data-k="pasivos" data-i="${i}">
     <td>${tx(p.acreedor,'Banco o entidad','dlAcreedor')}</td><td>${sl(p.tipo,TIPOS)}</td><td>${tx(p.ref,'opcional')}</td>
-    <td>${mny(p.saldo,'lo que debe hoy')}</td><td>${pct(p.tasa)}</td><td>${mny(p.cuota,'lo que paga')}</td><td>${num(p.meses,'faltan')}</td>
+    <td>${mny(p.saldo)}</td><td>${pct(p.tasa)}</td><td>${mny(p.cuota)}</td><td>${num(p.meses)}</td>
     <td>${sl(p.garantia,GAR)}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gIng').innerHTML=D.ingresos.map((g,i)=>`<tr data-k="ingresos" data-i="${i}">
-    <td>${tx(g.concepto,'Salario, arriendo…','dlIngreso')}</td><td>${tx(g.fuente,'Empresa o persona','dlPagador')}</td>
+    <td>${tx(g.concepto,'Salario, arriendo','dlIngreso')}</td><td>${tx(g.fuente,'Empresa o persona','dlPagador')}</td>
     <td>${sl(g.nat,NAT_I)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
     <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gEgr').innerHTML=D.egresos.map((g,i)=>`<tr data-k="egresos" data-i="${i}">
-    <td>${tx(g.cat,'Vivienda, salud…','dlCatEgreso')}</td><td>${tx(g.concepto,'Arriendo, mercado…','dlEgreso')}</td>
+    <td>${tx(g.cat,'Vivienda, salud','dlCatEgreso')}</td><td>${tx(g.concepto,'Arriendo, mercado','dlEgreso')}</td>
     <td>${sl(g.nat,NAT_E)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
     <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
   $('#gSop').innerHTML=D.soportes.map((s,i)=>`<tr data-k="soportes" data-i="${i}">
