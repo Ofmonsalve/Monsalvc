@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estado de Situación Patrimonial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --hueso:#F5F2EA;--papel:#FBF9F3;--tinta:#1A1815;--tinta2:#544F47;--tinta3:#8A8275;
+  --bronce:#8A7A50;--bronce2:#B9A876;--pelo:#D7D1C2;--pelo2:#E7E2D5;
+  --rojo:#78302A;--ambar:#8A6A20;--verde:#3A5A46;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--hueso);color:var(--tinta);font-family:"Jost",system-ui,sans-serif;
+  font-weight:300;font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.sc{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;font-weight:400;color:var(--tinta3)}
+
+/* ══ BARRA ══ */
+.bar{position:sticky;top:0;z-index:90;background:var(--tinta);color:var(--hueso);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 22px;flex-wrap:wrap}
+.bar .id{font-family:"Bodoni Moda",serif;font-size:12.5px;letter-spacing:.28em;text-transform:uppercase}
+.bar nav{display:flex}
+.bar nav button{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:400;
+  padding:8px 16px;border:1px solid #3A362E;background:none;color:#9E968A;cursor:pointer;margin-left:-1px;font-family:"Jost"}
+.bar nav button[aria-pressed=true]{background:var(--hueso);color:var(--tinta);border-color:var(--hueso)}
+.bar .acts{display:flex;gap:6px}
+.bar .acts button{font-size:9px;letter-spacing:.18em;text-transform:uppercase;background:none;
+  border:none;color:#9E968A;cursor:pointer;padding:6px 4px;font-family:"Jost"}
+.bar .acts button:hover{color:var(--hueso)}
+
+/* ══ EDITOR ══ */
+.ed{max-width:1080px;margin:0 auto;padding:40px 22px 84px}
+.ed h1{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(26px,5.4vw,38px);letter-spacing:-.015em;line-height:1.07}
+.ed .sub{color:var(--tinta2);max-width:64ch;margin-top:12px}
+.blk{margin-top:42px}
+.blk-h{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  border-bottom:1px solid var(--tinta);padding-bottom:9px;margin-bottom:2px;flex-wrap:wrap}
+.blk-h h2{font-family:"Bodoni Moda",serif;font-weight:400;font-size:18px}
+.blk-h .tot{font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap;color:var(--tinta2)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.grid{width:100%;border-collapse:collapse;min-width:700px}
+table.grid th{text-align:left;padding:10px 8px 7px 0;border-bottom:1px solid var(--pelo);white-space:nowrap}
+table.grid th.n{text-align:right;padding-right:0}
+table.grid td{padding:0;border-bottom:1px solid var(--pelo2)}
+table.grid input,table.grid select{width:100%;border:none;background:transparent;font-family:"Jost";
+  font-weight:300;font-size:13.5px;color:var(--tinta);padding:10px 8px 10px 0}
+table.grid input.n,table.grid input.mny{text-align:right;font-variant-numeric:tabular-nums;padding-right:0}
+table.grid input:focus,table.grid select:focus{outline:none;background:#FFFDF6;box-shadow:inset 0 -1px 0 var(--bronce)}
+table.grid input::placeholder{color:#BDB5A7}
+table.grid select{cursor:pointer}
+.del{background:none;border:none;color:#C4BCAE;cursor:pointer;font-size:15px;padding:6px 0 6px 8px;line-height:1}
+.del:hover{color:var(--rojo)}
+.add{font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;background:none;
+  border:1px solid var(--pelo);color:var(--tinta2);cursor:pointer;padding:7px 15px;margin-top:12px;font-family:"Jost"}
+.add:hover{border-color:var(--tinta);color:var(--tinta)}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0 28px}
+.mf{padding:11px 0;border-bottom:1px solid var(--pelo2)}
+.mf label{display:block;margin-bottom:4px}
+.mf input{width:100%;border:none;background:transparent;font-family:"Jost";font-weight:300;
+  font-size:15px;color:var(--tinta);padding:3px 0}
+.mf input:focus{outline:none;box-shadow:inset 0 -1px 0 var(--bronce)}
+.note{font-size:12.5px;color:var(--tinta3);margin-top:10px;max-width:78ch;line-height:1.6}
+.go{display:block;width:100%;margin-top:46px;font-size:10.5px;letter-spacing:.28em;
+  text-transform:uppercase;padding:18px;background:var(--tinta);color:var(--hueso);border:none;cursor:pointer;font-family:"Jost"}
+
+
+/* ══ DOCUMENTO ══ */
+.doc{max-width:880px;margin:0 auto;padding:0 34px}
+.cover{position:relative;background:var(--tinta);color:var(--hueso);overflow:hidden;
+  min-height:min(92vh,860px);display:flex;flex-direction:column;justify-content:space-between;padding:48px 40px 38px}
+.guil{position:absolute;inset:0;opacity:.11;pointer-events:none}
+.cover>*{position:relative;z-index:1}
+.c-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}
+.c-mark{font-family:"Bodoni Moda",serif;font-size:17px;letter-spacing:.3em;text-transform:uppercase;line-height:1.15}
+.c-mark em{display:block;font-family:"Jost";font-style:normal;font-size:7.5px;font-weight:300;
+  letter-spacing:.34em;color:#928A7D;margin-top:9px}
+.c-conf{text-align:right;font-size:7.5px;letter-spacing:.26em;text-transform:uppercase;color:#928A7D;line-height:2.4}
+.c-mid{padding:40px 0}
+.c-kick{font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--bronce2);margin-bottom:24px}
+.c-mid h1{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(32px,6.8vw,58px);
+  line-height:1.05;letter-spacing:-.018em;max-width:15ch}
+.dbl{margin:28px 0 20px;width:72px}
+.dbl i{display:block;background:var(--bronce2);height:1px}
+.dbl i:last-child{margin-top:3px;width:34px}
+.c-mid h2{font-weight:200;font-size:clamp(15px,3vw,19px);color:#BFB8AA;line-height:1.55;max-width:28ch}
+.c-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  border-top:1px solid #35312A;border-bottom:1px solid #35312A;margin:26px 0 22px}
+.c-sum div{padding:16px 16px 16px 0}
+.c-sum dt{font-size:7.5px;letter-spacing:.24em;text-transform:uppercase;color:#847C70;margin-bottom:6px}
+.c-sum dd{font-family:"Bodoni Moda",serif;font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.c-foot{display:flex;flex-wrap:wrap;gap:28px}
+.c-foot dt{font-size:7.5px;letter-spacing:.24em;text-transform:uppercase;color:#847C70;margin-bottom:4px}
+.c-foot dd{font-size:12.5px}
+
+.toc{display:grid;grid-template-columns:1.15fr 1fr;gap:0 46px;padding:56px 0 4px}
+.toc h3{font-family:"Bodoni Moda",serif;font-weight:400;font-size:11.5px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--tinta3);margin-bottom:20px;padding-bottom:9px;border-bottom:1px solid var(--pelo)}
+.toc-i{display:flex;align-items:baseline;gap:11px;padding:9px 0;border-bottom:1px solid var(--pelo2)}
+.toc-i .r{font-family:"Bodoni Moda",serif;font-size:12px;color:var(--bronce);width:30px;flex:none}
+.toc-i .t{font-size:14px}
+.toc-i .d{flex:1;border-bottom:1px dotted var(--pelo);transform:translateY(-4px)}
+.leer p{font-size:13.5px;margin-bottom:12px;color:var(--tinta2)}
+.leer b{font-weight:500;color:var(--tinta)}
+
+section{margin-bottom:54px}
+.shead{margin-bottom:26px}
+.snum{display:block;font-family:"Bodoni Moda",serif;font-size:11px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--bronce);margin-bottom:11px}
+.shead h3{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(22px,4.6vw,29px);
+  letter-spacing:-.014em;line-height:1.16;padding-bottom:13px;border-bottom:1px solid var(--tinta)}
+p{max-width:66ch;margin-bottom:15px;color:var(--tinta2)}
+p.lead{font-size:15.5px;color:var(--tinta);line-height:1.66}
+strong{font-weight:500;color:var(--tinta)}
+
+/* columna con notas al margen */
+.cols{display:grid;grid-template-columns:1fr 176px;gap:0 30px;align-items:start}
+.aside{border-top:1px solid var(--pelo);padding-top:11px}
+.aside h5{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--bronce);margin-bottom:8px}
+.aside p{font-size:11.5px;line-height:1.55;color:var(--tinta3);margin-bottom:11px;max-width:none}
+.aside p b{color:var(--tinta2);font-weight:500}
+
+.simple{border-left:2px solid var(--bronce);background:#F1EDE0;padding:13px 18px;margin:6px 0 20px;max-width:66ch}
+.simple span{display:block;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--bronce);margin-bottom:6px}
+.simple p{font-size:13.5px;margin:0;color:var(--tinta2)}
+
+.heroes{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
+  border-top:1px solid var(--pelo);border-bottom:1px solid var(--pelo);margin:2px 0 24px}
+.hero{padding:18px 20px 18px 0;min-width:0;border-right:1px solid var(--pelo2)}
+.hero:last-child{border-right:none}
+.hero .l{display:block;margin-bottom:8px}
+.hero .v{font-family:"Bodoni Moda",serif;font-weight:400;font-size:clamp(22px,4.4vw,30px);
+  letter-spacing:-.02em;line-height:1.05;font-variant-numeric:tabular-nums;display:block;word-break:break-word}
+.hero .v sup{font-size:.45em;top:-.85em;position:relative;margin-right:1px}
+.hero .v.neg{color:var(--rojo)}
+.hero .m{display:block;font-size:10.5px;color:var(--tinta3);margin-top:6px;line-height:1.4}
+
+figure{margin:2px 0 24px}
+figure figcaption{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--bronce);
+  padding-bottom:12px;border-bottom:1px solid var(--pelo2);margin-bottom:14px}
+figure .fn{font-size:11.5px;color:var(--tinta3);margin-top:8px;line-height:1.5;max-width:70ch}
+svg.viz{display:block;width:100%;height:auto;overflow:visible}
+svg.viz text{font-family:"Jost",sans-serif;font-weight:300}
+.gpar{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;align-items:start}
+
+table.rep{width:100%;border-collapse:collapse;margin:2px 0 20px;font-variant-numeric:tabular-nums;table-layout:fixed}
+table.rep caption{text-align:left;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--bronce);padding-bottom:10px}
+table.rep th{text-align:left;font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--tinta3);font-weight:400;padding:0 0 9px;border-bottom:1px solid var(--tinta)}
+table.rep th.n{text-align:right;padding-left:10px}
+table.rep td{padding:10px 0;border-bottom:1px solid var(--pelo2);font-size:13.5px;vertical-align:top;overflow-wrap:break-word}
+table.rep td.n{text-align:right;padding-left:10px;white-space:nowrap}
+table.rep td .s{display:block;font-size:10.5px;color:var(--tinta3);margin-top:2px;line-height:1.4}
+table.rep tr.sub td{border-bottom:1px solid var(--pelo);font-weight:400;color:var(--tinta);background:#F1EEE4}
+table.rep tr.sum td{border-bottom:none;border-top:1px solid var(--tinta);padding-top:12px;font-weight:400;font-size:14.5px;color:var(--tinta)}
+table.rep tr.sum td.n{font-size:16px}
+.pend{color:var(--tinta3)}
+.st{font-size:8px;letter-spacing:.14em;text-transform:uppercase;text-align:right;white-space:nowrap;padding-left:10px;color:var(--tinta3)}
+.st.a{color:var(--rojo)}.st.b{color:var(--ambar)}.st.c{color:var(--verde)}
+
+.obs{border-top:1px solid var(--pelo);padding:20px 0 3px;display:grid;grid-template-columns:44px 1fr;gap:0 18px}
+.obs:last-of-type{border-bottom:1px solid var(--pelo);padding-bottom:20px}
+.obs .i{font-family:"Bodoni Moda",serif;font-size:19px;color:var(--bronce);line-height:1.2}
+.obs h4{font-weight:400;font-size:16.5px;margin-bottom:8px;line-height:1.35;color:var(--tinta)}
+.obs p{font-size:13.5px;margin-bottom:10px}
+.obs p:last-child{margin-bottom:0}
+
+.pl{display:grid;grid-template-columns:24px 1fr auto;gap:0 14px;padding:12px 0;
+  border-bottom:1px solid var(--pelo2);align-items:baseline}
+.pl .n{font-size:10px;color:var(--bronce);font-variant-numeric:tabular-nums}
+.pl .t{font-size:13.5px}
+.pl .t span{display:block;font-size:10.5px;color:var(--tinta3);margin-top:2px;line-height:1.4}
+.pl .w{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta3);text-align:right;white-space:nowrap;padding-left:10px}
+
+.glos{display:grid;grid-template-columns:1fr 1fr;gap:0 34px;border-top:1px solid var(--tinta)}
+.gi{padding:12px 0;border-bottom:1px solid var(--pelo2)}
+.gi dt{font-size:13.5px;font-weight:400;color:var(--tinta);margin-bottom:3px}
+.gi dd{font-size:12px;color:var(--tinta3);line-height:1.55}
+.method{border-top:1px solid var(--tinta);padding-top:20px;columns:2;column-gap:34px}
+.method p{font-size:11.5px;line-height:1.68;color:var(--tinta3);max-width:none;margin-bottom:10px;break-inside:avoid}
+.colofon{text-align:center;padding:54px 0 70px;border-top:1px solid var(--pelo);margin-top:46px}
+.colofon .m{font-family:"Bodoni Moda",serif;font-size:12.5px;letter-spacing:.32em;text-transform:uppercase}
+.colofon .s{font-size:7.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--tinta3);margin-top:10px}
+.vacio{text-align:center;padding:100px 30px;color:var(--tinta3)}
+.hide{display:none}
+
+@media (max-width:820px){
+  .cols,.gpar,.toc,.glos{grid-template-columns:1fr;gap:0}
+  .aside{margin-top:14px}
+  .method{columns:1}
+}
+@media (max-width:620px){
+  body{font-size:14.5px}
+  .doc,.cover,.ed{padding-left:18px;padding-right:18px}
+  section{margin-bottom:44px}
+  .obs{grid-template-columns:1fr}.obs .i{margin-bottom:6px;font-size:17px}
+  .pl{grid-template-columns:20px 1fr}.pl .w{grid-column:2;text-align:left;padding:4px 0 0}
+  .meta-grid{grid-template-columns:1fr}
+  .hero{padding-right:0;border-right:none;border-bottom:1px solid var(--pelo2)}
+}
+@media print{
+  @page{size:A4;margin:15mm 14mm}
+  body{background:#fff;font-size:9.4pt;line-height:1.52}
+  .bar,.ed,.noprint{display:none!important}
+  .doc{max-width:none;padding:0}
+  .cover{min-height:0;height:auto;padding:20mm 12mm 14mm;break-after:page;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .toc{break-after:page;padding-top:0;gap:0 32px}
+  /* las secciones fluyen; solo se protege lo que no debe partirse */
+  section{margin-bottom:0;padding-bottom:7mm;break-inside:auto}
+  .brk{break-before:auto}
+  .shead{margin-bottom:5mm;break-after:avoid;break-inside:avoid}
+  .shead h3{break-after:avoid}
+  figure,.obs,.gi,.simple,.heroes,.pl{break-inside:avoid}
+  figure figcaption{break-after:avoid}
+  table.rep{break-inside:auto}
+  table.rep caption{break-after:avoid}
+  table.rep tr{break-inside:avoid}
+  table.rep tr.sub,table.rep tr.sum{break-before:avoid}
+  p{orphans:3;widows:3;break-inside:auto}
+  .cols{grid-template-columns:1fr 148px;gap:0 20px}
+  .aside{break-inside:avoid}
+  .method{columns:2;column-gap:26px}
+  .glos{gap:0 26px}
+  .colofon{break-inside:avoid;padding:26mm 0 0}
+  p,td,.obs p{color:#302D28}
+  svg,.hero .v.neg,.st.a,.st.b,.st.c,tr.sub td,.simple,.c-sum{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="bar noprint">
+  <div class="id" id="barMark">SUMMA</div>
+  <nav>
+    <button id="tabDatos" aria-pressed="true">Datos</button>
+    <button id="tabDoc" aria-pressed="false">Documento</button>
+  </nav>
+  <div class="acts">
+    <button id="btExp">Exportar</button><button id="btImp">Importar</button><button id="btPrint">Imprimir</button>
+  </div>
+</div>
+<input type="file" id="fileImp" accept="application/json" style="display:none">
+
+<datalist id="dlActivo"></datalist>
+<datalist id="dlEntidad"></datalist>
+<datalist id="dlAcreedor"></datalist>
+<datalist id="dlIngreso"></datalist>
+<datalist id="dlPagador"></datalist>
+<datalist id="dlCatEgreso"></datalist>
+<datalist id="dlEgreso"></datalist>
+<datalist id="dlSoporte"></datalist>
+
+<div class="ed" id="vDatos">
+  <h1>Datos del estado</h1>
+  <p class="sub">Cargue únicamente lo que pueda respaldar con un documento. Un dato estimado contamina todo lo que se calcule después; una casilla vacía, no. Los campos de texto sugieren opciones al escribir, pero admiten cualquier valor.</p>
+
+  <div class="blk"><div class="blk-h"><h2>Encabezado</h2></div><div class="meta-grid" id="gMeta"></div></div>
+
+  <div class="blk">
+    <div class="blk-h"><h2>Activos · lo que posee</h2><span class="tot" id="tActivos">—</span></div>
+    <div class="scroll"><table class="grid"><thead><tr>
+      <th class="sc" style="width:13%">Clase</th><th class="sc" style="width:20%">Concepto</th>
+      <th class="sc" style="width:16%">Entidad</th><th class="sc" style="width:11%">Referencia</th>
+      <th class="sc" style="width:12%">Valorado a</th><th class="sc n" style="width:15%">Valor</th>
+      <th class="sc" style="width:11%">Soporte</th><th style="width:22px"></th>
+    </tr></thead><tbody id="gAct"></tbody></table></div>
+    <button class="add" data-add="activos">Añadir activo</button>
+    <p class="note">La clase determina el tratamiento analítico. <b>Líquido</b> es lo que puede usar mañana sin perder valor y alimenta la reserva de emergencia; <b>Inversión</b> y <b>Productivo</b> son los bienes que generan renta; <b>Uso personal</b> se excluye de ambos cálculos porque no produce ni se vende con facilidad.</p>
+  </div>
+
+  <div class="blk">
+    <div class="blk-h"><h2>Pasivos · lo que debe</h2><span class="tot" id="tPasivos">—</span></div>
+    <div class="scroll"><table class="grid"><thead><tr>
+      <th class="sc" style="width:19%">Acreedor</th><th class="sc" style="width:11%">Tipo</th>
+      <th class="sc" style="width:10%">Obligación</th><th class="sc n" style="width:14%">Saldo</th>
+      <th class="sc n" style="width:9%">Tasa EA</th><th class="sc n" style="width:13%">Cuota</th>
+      <th class="sc n" style="width:8%">Meses</th><th class="sc" style="width:11%">Garantía</th><th style="width:22px"></th>
+    </tr></thead><tbody id="gPas"></tbody></table></div>
+    <button class="add" data-add="pasivos">Añadir pasivo</button>
+    <p class="note">La tasa va en efectivo anual: escriba 28,5 para 28,5%. Es el dato más importante de toda la tabla, porque determina cuál deuda conviene pagar primero. Con la cuota se calcula además en cuántos meses queda libre de cada obligación.</p>
+  </div>
+
+  <div class="blk">
+    <div class="blk-h"><h2>Ingresos · lo que entra</h2><span class="tot" id="tIng">—</span></div>
+    <div class="scroll"><table class="grid"><thead><tr>
+      <th class="sc" style="width:23%">Concepto</th><th class="sc" style="width:21%">Pagador</th>
+      <th class="sc" style="width:12%">Naturaleza</th><th class="sc" style="width:13%">Periodicidad</th>
+      <th class="sc n" style="width:16%">Valor</th><th class="sc n" style="width:15%">Al mes</th><th style="width:22px"></th>
+    </tr></thead><tbody id="gIng"></tbody></table></div>
+    <button class="add" data-add="ingresos">Añadir ingreso</button>
+    <p class="note">Registre el valor tal como lo recibe y elija cada cuánto. Una prima semestral se digita completa con periodicidad semestral y el sistema la convierte a su equivalente mensual.</p>
+  </div>
+
+  <div class="blk">
+    <div class="blk-h"><h2>Egresos · lo que sale</h2><span class="tot" id="tEgr">—</span></div>
+    <div class="scroll"><table class="grid"><thead><tr>
+      <th class="sc" style="width:18%">Categoría</th><th class="sc" style="width:26%">Concepto</th>
+      <th class="sc" style="width:13%">Naturaleza</th><th class="sc" style="width:13%">Periodicidad</th>
+      <th class="sc n" style="width:15%">Valor</th><th class="sc n" style="width:15%">Al mes</th><th style="width:22px"></th>
+    </tr></thead><tbody id="gEgr"></tbody></table></div>
+    <button class="add" data-add="egresos">Añadir egreso</button>
+    <p class="note">No incluya cuotas de deuda: se toman de la tabla de pasivos para no contarlas dos veces. Las obligaciones anuales —predial, seguros, matrículas— sí van aquí con su periodicidad.</p>
+  </div>
+
+  <div class="blk">
+    <div class="blk-h"><h2>Soportes documentales</h2><span class="tot" id="tSop">—</span></div>
+    <div class="scroll"><table class="grid"><thead><tr>
+      <th class="sc" style="width:32%">Documento</th><th class="sc" style="width:16%">Tipo</th>
+      <th class="sc" style="width:22%">Entidad emisora</th><th class="sc" style="width:15%">Fecha</th>
+      <th class="sc" style="width:15%">Estado</th><th style="width:22px"></th>
+    </tr></thead><tbody id="gSop"></tbody></table></div>
+    <button class="add" data-add="soportes">Añadir soporte</button>
+    <p class="note">Relación de los documentos que respaldan las cifras. Se imprime como anexo al final del informe y es lo que permite defender cada valor ante un banco, un socio o una autoridad. Los archivos se conservan aparte; aquí solo se deja constancia de cuáles existen y cuáles faltan.</p>
+  </div>
+
+  <button class="go" id="btGen">Generar documento</button>
+</div>
+
+<div id="vDoc" class="hide"></div>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const nf=new Intl.NumberFormat('es-CO',{maximumFractionDigits:0});
+const nf1=new Intl.NumberFormat('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2});
+const C=x=>(x<0?'−$':'$')+nf1.format(Math.abs(x||0));
+const Cs=x=>{const v=Math.abs(x||0);return (x<0?'−$':'$')+(v>=1e9?nf1.format(v/1e9)+' MM':v>=1e6?nf1.format(v/1e6)+' M':nf1.format(v))};
+const CH=x=>(x<0?'−':'')+'<sup>$</sup>'+nf1.format(Math.abs(x||0));
+const P=x=>nf1.format((x||0)*100)+'%';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cut=(s,n)=>{s=String(s||'');return s.length>n?s.slice(0,n-1)+'…':s};
+
+const CLASES=['Líquido','Inversión','Por cobrar','Bien raíz','Productivo','Uso personal'];
+const TIPOS=['Rotativo','Consumo','Libranza','Hipotecario','Vehículo','Educativo','Comercial','Otro'];
+const GAR=['Sin garantía','Libranza','Hipotecaria','Prendaria','Codeudor'];
+const NAT_I=['Fijo','Variable'],NAT_E=['Fijo','Variable','Discrecional'];
+const PER=['Mensual','Quincenal','Bimestral','Trimestral','Semestral','Anual'];
+const FACT={'Mensual':1,'Quincenal':0.5,'Bimestral':2,'Trimestral':3,'Semestral':6,'Anual':12};
+const SOP=['Pendiente','Extracto','Certificado','Avalúo','Escritura','Contrato','Otro'];
+const EST_SOP=['Pendiente','Solicitado','Recibido','Verificado'];
+const HOY=new Date().toISOString().slice(0,10);
+
+const SUG={
+ dlActivo:['Cuenta de ahorros','Cuenta corriente','Efectivo','CDT','Fondo de inversión colectiva','Portafolio de acciones','Criptoactivos','Fondo voluntario de pensión','Cesantías','Cuenta por cobrar','Vivienda de residencia','Inmueble en arriendo','Lote','Finca','Local comercial','Vehículo','Participación en sociedad','Maquinaria y equipo','Menaje y enseres'],
+ dlEntidad:['Bancolombia','Davivienda','Banco de Bogotá','BBVA','Scotiabank Colpatria','Banco de Occidente','Nu','Nequi','Daviplata','Lulo Bank','Skandia','Protección','Porvenir','Colfondos','Credicorp Capital','Acciones y Valores','Interactive Brokers','Binance','Wise','Payoneer'],
+ dlAcreedor:['Bancolombia','Davivienda','Banco de Bogotá','BBVA','Scotiabank Colpatria','Banco Falabella','Nu','Tuya','ICETEX','Crédito hipotecario','Libranza','Fintech de crédito'],
+ dlIngreso:['Salario','Honorarios profesionales','Contrato de prestación de servicios','Trabajo remoto en el exterior','Ingresos por plataformas','Dividendos','Arrendamientos','Rendimientos financieros','Pensión','Asignación de retiro','Utilidad de negocio propio','Prima legal','Bonificación'],
+ dlPagador:['Empleador','Cliente propio','Plataforma digital','Arrendatario','Entidad financiera','Sociedad propia'],
+ dlCatEgreso:['Vivienda','Alimentación','Transporte','Salud','Educación','Seguros','Impuestos','Servicios públicos','Comunicaciones','Ocio y viajes','Cuidado personal','Familia y apoyos','Ahorro e inversión','Otros'],
+ dlSoporte:['Extracto bancario','Certificado de saldo','Extracto de tarjeta de crédito','Certificado de inversión','Avalúo comercial','Certificado de tradición y libertad','Escritura pública','Tarjeta de propiedad','Contrato de arrendamiento','Certificado de ingresos','Desprendible de pago','Declaración de renta','Plan de amortización'],
+ dlEgreso:['Arriendo','Administración','Servicios públicos','Internet y telefonía','Mercado','Restaurantes','Combustible','Transporte','Seguro de vehículo','Medicina prepagada','Colegio o universidad','Impuesto predial','Impuesto vehicular','Declaración de renta','Suscripciones','Viajes','Gimnasio','Empleada doméstica']
+};
+Object.keys(SUG).forEach(id=>{const d=document.getElementById(id);
+  if(d)d.innerHTML=SUG[id].map(x=>`<option value="${esc(x)}">`).join('')});
+
+const D={meta:{marca:'SUMMA',marcaSub:'Patrimonio Privado',titular:'',documento:'',corte:HOY,
+  subtitulo:'Diagnóstico de posición financiera',fuente:'Documentos aportados por el titular'},
+  activos:[],pasivos:[],ingresos:[],egresos:[],soportes:[]};
+const VACIO={
+ activos:{clase:'Líquido',concepto:'',entidad:'',ref:'',fecha:HOY,valor:null,soporte:'Pendiente'},
+ pasivos:{acreedor:'',tipo:'Consumo',ref:'',saldo:null,tasa:null,cuota:null,meses:null,garantia:'Sin garantía'},
+ ingresos:{concepto:'',fuente:'',nat:'Fijo',per:'Mensual',valor:null},
+ egresos:{cat:'',concepto:'',nat:'Fijo',per:'Mensual',valor:null},
+ soportes:{doc:'',tipo:'Extracto',entidad:'',fecha:HOY,estado:'Pendiente'}};
+['activos','pasivos','ingresos','egresos','soportes'].forEach(k=>{for(let i=0;i<3;i++)D[k].push(JSON.parse(JSON.stringify(VACIO[k])))});
+
+/* ══ EDITOR ══ */
+const mny=v=>`<input class="mny" inputmode="numeric" placeholder="0" value="${v==null?'':nf.format(v)}">`;
+const pct=v=>`<input class="n" inputmode="decimal" placeholder="—" value="${v==null?'':nf1.format(v)}">`;
+const tx=(v,ph,dl)=>`<input placeholder="${ph||''}" value="${esc(v)}"${dl?` list="${dl}"`:''}>`;
+const num=v=>`<input class="n" type="number" step="1" placeholder="—" value="${v==null?'':v}">`;
+const dt=v=>`<input type="date" value="${esc(v)}">`;
+const sl=(v,o)=>`<select>${o.map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')}</select>`;
+
+function pintarMeta(){
+  const F=[['titular','Titular','text'],['documento','Documento de identidad','text'],
+    ['corte','Fecha de corte','date'],['marca','Nombre de la firma','text'],
+    ['marcaSub','Descriptor','text'],['fuente','Fuente de la información','text'],
+    ['subtitulo','Subtítulo del documento','text']];
+  $('#gMeta').innerHTML=F.map(([k,l,t])=>`<div class="mf"><label class="sc">${l}</label><input data-meta="${k}" type="${t}" value="${esc(D.meta[k])}"></div>`).join('');
+  $$('#gMeta input').forEach(el=>el.addEventListener('input',()=>{D.meta[el.dataset.meta]=el.value;$('#barMark').textContent=D.meta.marca||'—'}));
+}
+const COLS={activos:['clase','concepto','entidad','ref','fecha','valor','soporte'],
+  pasivos:['acreedor','tipo','ref','saldo','tasa','cuota','meses','garantia'],
+  ingresos:['concepto','fuente','nat','per','valor'],egresos:['cat','concepto','nat','per','valor'],soportes:['doc','tipo','entidad','fecha','estado']};
+const MNY=new Set(['valor','saldo','cuota']),PCTF=new Set(['tasa']),INT=new Set(['meses']);
+const MZ=`style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;color:var(--tinta3);padding-right:0"`;
+
+function pintarTablas(){
+  $('#gAct').innerHTML=D.activos.map((a,i)=>`<tr data-k="activos" data-i="${i}"><td>${sl(a.clase,CLASES)}</td>
+    <td>${tx(a.concepto,'Concepto','dlActivo')}</td><td>${tx(a.entidad,'Entidad','dlEntidad')}</td>
+    <td>${tx(a.ref,'N.º')}</td><td>${dt(a.fecha)}</td><td>${mny(a.valor)}</td><td>${sl(a.soporte,SOP)}</td>
+    <td><button class="del">×</button></td></tr>`).join('');
+  $('#gPas').innerHTML=D.pasivos.map((p,i)=>`<tr data-k="pasivos" data-i="${i}">
+    <td>${tx(p.acreedor,'Acreedor','dlAcreedor')}</td><td>${sl(p.tipo,TIPOS)}</td><td>${tx(p.ref,'N.º')}</td>
+    <td>${mny(p.saldo)}</td><td>${pct(p.tasa)}</td><td>${mny(p.cuota)}</td><td>${num(p.meses)}</td>
+    <td>${sl(p.garantia,GAR)}</td><td><button class="del">×</button></td></tr>`).join('');
+  $('#gIng').innerHTML=D.ingresos.map((g,i)=>`<tr data-k="ingresos" data-i="${i}">
+    <td>${tx(g.concepto,'Concepto','dlIngreso')}</td><td>${tx(g.fuente,'Pagador','dlPagador')}</td>
+    <td>${sl(g.nat,NAT_I)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
+    <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
+  $('#gEgr').innerHTML=D.egresos.map((g,i)=>`<tr data-k="egresos" data-i="${i}">
+    <td>${tx(g.cat,'Categoría','dlCatEgreso')}</td><td>${tx(g.concepto,'Concepto','dlEgreso')}</td>
+    <td>${sl(g.nat,NAT_E)}</td><td>${sl(g.per,PER)}</td><td>${mny(g.valor)}</td>
+    <td class="mzd" ${MZ}>${g.valor?C(g.valor/FACT[g.per]):'—'}</td><td><button class="del">×</button></td></tr>`).join('');
+  $('#gSop').innerHTML=D.soportes.map((s,i)=>`<tr data-k="soportes" data-i="${i}">
+    <td>${tx(s.doc,'Nombre del documento','dlSoporte')}</td><td>${sl(s.tipo,SOP.filter(x=>x!=='Pendiente'))}</td>
+    <td>${tx(s.entidad,'Entidad','dlEntidad')}</td><td>${dt(s.fecha)}</td>
+    <td>${sl(s.estado,EST_SOP)}</td><td><button class="del">×</button></td></tr>`).join('');
+  enlazar();totales();
+}
+function enlazar(){
+  $$('#gAct tr,#gPas tr,#gIng tr,#gEgr tr,#gSop tr').forEach(tr=>{
+    const k=tr.dataset.k,i=+tr.dataset.i,cols=COLS[k];
+    Array.from(tr.querySelectorAll('input,select')).forEach((el,j)=>{
+      const f=cols[j];if(!f)return;
+      if(MNY.has(f)){el.addEventListener('input',()=>{
+        const pos=el.selectionStart,len=el.value.length,raw=el.value.replace(/[^\d]/g,'');
+        D[k][i][f]=raw===''?null:+raw;el.value=raw===''?'':nf.format(+raw);
+        const d=el.value.length-len;try{el.setSelectionRange(Math.max(0,pos+d),Math.max(0,pos+d))}catch(e){}
+        totales();refM(tr,k,i)})}
+      else if(PCTF.has(f)){el.addEventListener('input',()=>{
+        const raw=el.value.replace(/[^\d,.]/g,'').replace(',','.');
+        D[k][i][f]=raw===''?null:parseFloat(raw);totales()});
+        el.addEventListener('blur',()=>{const v=D[k][i][f];el.value=v==null?'':nf1.format(v)})}
+      else if(INT.has(f)){el.addEventListener('input',()=>{D[k][i][f]=el.value===''?null:parseInt(el.value,10);totales()})}
+      else{el.addEventListener('input',()=>{D[k][i][f]=el.value;totales();refM(tr,k,i)})}
+    });
+    const b=tr.querySelector('.del');
+    if(b)b.addEventListener('click',()=>{D[k].splice(i,1);if(!D[k].length)D[k].push(JSON.parse(JSON.stringify(VACIO[k])));pintarTablas()});
+  });
+}
+function refM(tr,k,i){const c=tr.querySelector('.mzd');if(!c)return;const o=D[k][i];c.textContent=o.valor?C(o.valor/FACT[o.per]):'—'}
+$$('.add').forEach(b=>b.addEventListener('click',()=>{D[b.dataset.add].push(JSON.parse(JSON.stringify(VACIO[b.dataset.add])));pintarTablas()}));
+const sum=(a,f)=>a.reduce((s,x)=>s+(parseFloat(f(x))||0),0);
+const mens=a=>sum(a,x=>(x.valor||0)/FACT[x.per||'Mensual']);
+function totales(){
+  $('#tActivos').textContent=C(sum(D.activos,x=>x.valor));
+  $('#tPasivos').textContent=C(sum(D.pasivos,x=>x.saldo));
+  $('#tIng').textContent=C(mens(D.ingresos))+' al mes';
+  $('#tEgr').textContent=C(mens(D.egresos)+sum(D.pasivos,x=>x.cuota))+' al mes';
+  const sv=D.soportes.filter(s=>s.doc&&(s.estado==='Recibido'||s.estado==='Verificado')).length;
+  const st=D.soportes.filter(s=>s.doc).length;
+  $('#tSop').textContent=st?sv+' de '+st+' en firme':'—';
+}
+
+/* ══ CÁLCULO ══ */
+function calc(){
+  const a=D.activos.filter(x=>x.valor),p=D.pasivos.filter(x=>x.saldo);
+  const pc={};CLASES.forEach(c=>pc[c]=sum(a.filter(x=>x.clase===c),x=>x.valor));
+  const tA=sum(a,x=>x.valor),tP=sum(p,x=>x.saldo),neto=tA-tP;
+  const liq=pc['Líquido'],prod=pc['Inversión']+pc['Productivo'];
+  const ing=D.ingresos.filter(x=>x.valor),egr=D.egresos.filter(x=>x.valor);
+  const ingMes=mens(ing),cuotas=sum(p,x=>x.cuota),egrMes=mens(egr)+cuotas,exc=ingMes-egrMes;
+  const cT=p.filter(x=>x.tasa!=null),sT=p.filter(x=>x.tasa==null),sct=sum(cT,x=>x.saldo);
+  const costo=sct?sum(cT,x=>x.saldo*x.tasa/100)/sct:null;
+  const intAnual=sum(cT,x=>x.saldo*x.tasa/100);
+  const orden=cT.slice().sort((x,y)=>y.tasa-x.tasa);
+  const mayorA=a.slice().sort((x,y)=>y.valor-x.valor)[0]||null;
+  const pp={};ing.forEach(i=>{const q=i.fuente||'Sin identificar';pp[q]=(pp[q]||0)+i.valor/FACT[i.per]});
+  const mayorP=Object.entries(pp).sort((x,y)=>y[1]-x[1])[0]||['—',0];
+  const cSop=a.filter(x=>x.soporte&&x.soporte!=='Pendiente');
+  const catE=[...new Set(egr.map(e=>e.cat||'Otros'))].map(c=>({n:c,v:mens(egr.filter(e=>(e.cat||'Otros')===c))})).sort((x,y)=>y.v-x.v);
+  return {a,p,ing,egr,pc,tA,tP,neto,liq,prod,ingMes,egrMes,cuotas,exc,catE,
+    aut:egrMes?liq/egrMes:null,ahorro:ingMes?exc/ingMes:null,carga:ingMes?cuotas/ingMes:null,
+    endeud:tA?tP/tA:null,costo,intAnual,sT,cT,orden,mayorA,mayorP,
+    concI:ingMes?mayorP[1]/ingMes:null,concA:tA&&mayorA?mayorA.valor/tA:null,
+    partP:tA?prod/tA:null,resp:a.length?cSop.length/a.length:null,
+    ext:extincion(p)};
+}
+function extincion(p){
+  const xs=p.filter(x=>x.saldo>0).map(x=>({s:x.saldo,i:x.tasa!=null?Math.pow(1+x.tasa/100,1/12)-1:0,c:x.cuota||0}));
+  if(!xs.length||xs.every(x=>!x.c))return null;
+  const serie=[],lim=360;let m=0,estanca=false;
+  while(m<=lim){
+    const t=xs.reduce((s,x)=>s+Math.max(x.s,0),0);serie.push(t);
+    if(t<=0.5)break;
+    let mueve=false;
+    xs.forEach(x=>{if(x.s<=0)return;const ns=x.s*(1+x.i)-x.c;if(ns<x.s-0.01)mueve=true;x.s=Math.max(ns,0)});
+    if(!mueve){estanca=true;for(let q=0;q<59;q++)serie.push(t);break}
+    m++;
+  }
+  return {serie,meses:serie.length-1,estanca,completo:!estanca&&serie[serie.length-1]<=0.5};
+}
+
+/* ══ GRÁFICAS ══ */
+const PAL={'Líquido':'#1A1815','Inversión':'#8A7A50','Por cobrar':'#6E675C','Bien raíz':'#3A5A46','Productivo':'#B9A876','Uso personal':'#CAC2B3'};
+const INK='#1A1815',T2='#544F47',T3='#8A8275',BRZ='#8A7A50',PELO='#D7D1C2',ROJO='#78302A',VER='#3A5A46';
+
+function gDona(k){
+  const cl=CLASES.filter(c=>k.pc[c]>0);if(!cl.length||!k.tA)return '';
+  const R=68,SW=14,CC=2*Math.PI*R,cx=112,cy=118;let acc=0;
+  const arcs=cl.map(c=>{const f=k.pc[c]/k.tA,len=Math.max(CC*f-2.4,.6);
+    const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${PAL[c]}" stroke-width="${SW}" stroke-dasharray="${len} ${CC-len}" stroke-dashoffset="${-acc}" transform="rotate(-90 ${cx} ${cy})"/>`;acc+=CC*f;return s}).join('');
+  const leg=cl.map((c,i)=>`<g transform="translate(250 ${30+i*30})">
+    <rect x="0" y="6" width="16" height="2.4" fill="${PAL[c]}"/>
+    <text x="25" y="10" font-size="11.5" fill="${T2}">${c}</text>
+    <text x="25" y="24" font-size="10.5" fill="${T3}">${Cs(k.pc[c])}</text>
+    <text x="230" y="10" font-size="12" fill="${INK}" text-anchor="end">${P(k.pc[c]/k.tA)}</text></g>`).join('');
+  return `<svg class="viz" viewBox="0 0 486 ${Math.max(240,cl.length*30+50)}" role="img">
+    <circle cx="${cx}" cy="${cy}" r="${R+SW/2+7}" fill="none" stroke="${PELO}" stroke-width=".5"/>${arcs}
+    <text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="8.5" letter-spacing=".22em" fill="${T3}">ACTIVO TOTAL</text>
+    <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="20" fill="${INK}" font-family="Bodoni Moda, serif">${Cs(k.tA)}</text>
+    ${leg}</svg>`;
+}
+function gBalance(k){
+  if(!k.tA)return '';
+  const W=452,X0=12,H=19,base=Math.max(k.tA,k.tP+Math.max(k.neto,0))||1;
+  const cl=CLASES.filter(c=>k.pc[c]>0);let acc=0;
+  const f1=cl.map(c=>{const w=k.pc[c]/base*W;const g=`<rect x="${X0+acc}" y="40" width="${Math.max(w-1.2,.5)}" height="${H}" fill="${PAL[c]}"/>`+
+    (w>52?`<text x="${X0+acc+w/2}" y="${40+H/2+3.5}" text-anchor="middle" font-size="9.5" fill="#F5F2EA">${P(k.pc[c]/k.tA)}</text>`:'');acc+=w;return g}).join('');
+  const wp=k.tP/base*W,wn=Math.max(k.neto,0)/base*W,neg=k.neto<0;
+  return `<svg class="viz" viewBox="0 0 480 148" role="img">
+   <text x="${X0}" y="28" font-size="8.5" letter-spacing=".2em" fill="${T3}">LO QUE POSEE</text>
+   <text x="${X0+W}" y="28" text-anchor="end" font-size="12" fill="${INK}">${Cs(k.tA)}</text>${f1}
+   <text x="${X0}" y="94" font-size="8.5" letter-spacing=".2em" fill="${T3}">QUIÉN LO FINANCIA</text>
+   <rect x="${X0}" y="106" width="${Math.max(wp-1.2,.5)}" height="${H}" fill="${ROJO}"/>
+   ${wp>60?`<text x="${X0+wp/2}" y="${106+H/2+3.5}" text-anchor="middle" font-size="9.5" fill="#F5F2EA">${P(k.tP/k.tA)}</text>`:''}
+   ${neg?'':`<rect x="${X0+wp}" y="106" width="${Math.max(wn,.5)}" height="${H}" fill="${INK}" opacity=".85"/>
+     ${wn>60?`<text x="${X0+wp+wn/2}" y="${106+H/2+3.5}" text-anchor="middle" font-size="9.5" fill="#F5F2EA">${P(k.neto/k.tA)}</text>`:''}`}
+   <g font-size="10.5" fill="${T2}">
+     <text x="${X0}" y="141">Terceros · ${Cs(k.tP)}</text>
+     <text x="${X0+W}" y="141" text-anchor="end" fill="${neg?ROJO:T2}">Suyo · ${Cs(k.neto)}</text></g></svg>`;
+}
+function gCascada(k){
+  if(!k.ingMes)return '';
+  const pasos=[{n:'Ingreso',v:k.ingMes,t:'i'},...k.catE.map(c=>({n:c.n,v:-c.v,t:'e'}))];
+  if(k.cuotas>0)pasos.push({n:'Deudas',v:-k.cuotas,t:'e'});
+  pasos.push({n:k.exc>=0?'Le queda':'Le falta',v:k.exc,t:'r'});
+  const W=468,X0=14,TOP=26,HH=150,n=pasos.length,gap=(W-X0)/n,bw=Math.min(52,gap-10);
+  const arriba=k.ingMes, abajo=k.exc<0?-k.exc:0, span=(arriba+abajo)||1;
+  const cero=TOP+HH*arriba/span, Y=v=>cero-HH*v/span;
+  let run=0,g='',px=null,py=null;
+  pasos.forEach((p,i)=>{
+    const x=X0+i*gap+(gap-bw)/2;let y0,y1,col;
+    if(p.t==='i'){y0=cero;y1=Y(p.v);run=p.v;col=INK}
+    else if(p.t==='e'){y0=Y(run);run+=p.v;y1=Y(run);col='#ADA391'}
+    else{col=p.v>=0?BRZ:ROJO;y0=cero;y1=Y(p.v)}
+    const yt=Math.min(y0,y1),hh=Math.max(Math.abs(y1-y0),1.4);
+    if(px!=null&&p.t!=='r')g+=`<line x1="${px}" y1="${py}" x2="${x}" y2="${py}" stroke="${PELO}" stroke-width=".7" stroke-dasharray="2 2"/>`;
+    const yTxt=p.v>=0?yt-6:yt+hh+13;
+    g+=`<rect x="${x}" y="${yt}" width="${bw}" height="${hh}" fill="${col}"/>
+      <text x="${x+bw/2}" y="${yTxt}" text-anchor="middle" font-size="9.5" fill="${p.t==='r'&&p.v<0?ROJO:T2}">${Cs(Math.abs(p.v))}</text>
+      <text x="${x+bw/2}" y="${TOP+HH+22}" text-anchor="middle" font-size="9" fill="${T3}">${esc(cut(p.n,11))}</text>
+      ${p.t!=='i'?`<text x="${x+bw/2}" y="${TOP+HH+34}" text-anchor="middle" font-size="8.5" fill="${T3}">${P(Math.abs(p.v)/k.ingMes)}</text>`:''}`;
+    px=x+bw;py=y1;
+  });
+  return `<svg class="viz" viewBox="0 0 486 ${TOP+HH+44}" role="img">
+    <line x1="${X0}" y1="${cero}" x2="${W}" y2="${cero}" stroke="${INK}" stroke-width=".8"/>${g}</svg>`;
+}
+function gInteres(k){
+  if(!k.orden.length)return '';
+  const its=k.orden.map(p=>({n:p.acreedor||'—',t:p.tasa,s:p.saldo,i:p.saldo*p.tasa/100}));
+  const W=470,X0=150,H=its.length*34+30,mx=Math.max(...its.map(x=>x.i))||1;
+  const b=its.map((x,i)=>{const y=18+i*34,w=(W-X0-70)*x.i/mx;
+    return `<text x="0" y="${y+4}" font-size="11.5" fill="${T2}">${esc(cut(x.n,20))}</text>
+      <text x="0" y="${y+17}" font-size="9.5" fill="${T3}">${nf1.format(x.t)}% · saldo ${Cs(x.s)}</text>
+      <rect x="${X0}" y="${y-6}" width="${Math.max(w,1)}" height="13" fill="${i===0?ROJO:BRZ}" opacity="${i===0?1:.62}"/>
+      <text x="${X0+Math.max(w,1)+8}" y="${y+4}" font-size="11" fill="${INK}">${Cs(x.i)}</text>`}).join('');
+  return `<svg class="viz" viewBox="-2 0 500 ${H}" role="img">${b}
+    <line x1="${X0}" y1="8" x2="${X0}" y2="${H-22}" stroke="${PELO}" stroke-width=".6"/>
+    <text x="${X0}" y="${H-6}" font-size="8.5" letter-spacing=".18em" fill="${T3}">INTERÉS QUE PAGA CADA AÑO</text></svg>`;
+}
+function gExtincion(k){
+  const e=k.ext;if(!e||e.serie.length<3)return '';
+  const W=468,X0=54,TOP=16,HH=132,S=e.serie,n=S.length-1,mx=S[0]||1;
+  const X=i=>X0+(W-X0)*i/n,Y=v=>TOP+HH*(1-v/mx);
+  let pts=S.map((v,i)=>`${X(i)},${Y(v)}`).join(' ');
+  let g='';
+  for(let q=0;q<=3;q++){const v=mx*q/3;g+=`<line x1="${X0}" y1="${Y(v)}" x2="${W}" y2="${Y(v)}" stroke="${PELO}" stroke-width=".4"/>
+    <text x="${X0-8}" y="${Y(v)+3.5}" text-anchor="end" font-size="9" fill="${T3}">${Cs(v)}</text>`}
+  const marcas=[0,Math.round(n/3),Math.round(2*n/3),n];
+  marcas.forEach(i=>{g+=`<text x="${X(i)}" y="${TOP+HH+16}" text-anchor="middle" font-size="9" fill="${T3}">${i===0?'hoy':'mes '+i}</text>`});
+  const fin=e.completo?`<circle cx="${X(n)}" cy="${Y(S[n])}" r="3.2" fill="${VER}"/>
+    <text x="${X(n)}" y="${Y(S[n])-11}" text-anchor="end" font-size="10.5" fill="${VER}">libre en ${n} meses</text>`:'';
+  return `<svg class="viz" viewBox="0 0 480 ${TOP+HH+26}" role="img">${g}
+    <polygon points="${X0},${Y(0)} ${pts} ${X(n)},${Y(0)}" fill="${BRZ}" fill-opacity=".13"/>
+    <polyline points="${pts}" fill="none" stroke="${INK}" stroke-width="1.4"/>
+    <line x1="${X0}" y1="${Y(0)}" x2="${W}" y2="${Y(0)}" stroke="${INK}" stroke-width=".7"/>${fin}</svg>`;
+}
+function gReserva(k){
+  if(k.aut==null)return '';
+  const W=468,X0=12,meta=6,esc_=Math.max(k.aut,meta)*1.12,w=(W-X0)*Math.min(k.aut/esc_,1),wm=(W-X0)*meta/esc_;
+  const col=k.aut>=6?VER:k.aut>=3?'#8A6A20':ROJO;
+  return `<svg class="viz" viewBox="0 0 480 74" role="img">
+    <text x="${X0}" y="14" font-size="8.5" letter-spacing=".2em" fill="${T3}">MESES QUE PODRÍA VIVIR SIN INGRESO</text>
+    <rect x="${X0}" y="26" width="${W-X0}" height="16" fill="#E7E2D5"/>
+    <rect x="${X0}" y="26" width="${Math.max(w,2)}" height="16" fill="${col}"/>
+    <line x1="${X0+wm}" y1="20" x2="${X0+wm}" y2="48" stroke="${INK}" stroke-width="1.1"/>
+    <text x="${X0+wm}" y="60" text-anchor="middle" font-size="9.5" fill="${INK}">meta · 6 meses</text>
+    <text x="${X0+Math.max(w,2)+9}" y="38" font-size="13" fill="${col}">${nf1.format(k.aut)} meses</text></svg>`;
+}
+function gIndic(IND){
+  const it=IND.filter(x=>x[5]!=null&&x[6]!=null);if(!it.length)return '';
+  const W=414,X0=158,RH=32,H=it.length*RH+22;
+  const b=it.map((x,i)=>{const [n,,vt,,est,v,r,inv]=x,e=Math.max(v,r)*1.4||1,y=16+i*RH;
+    const wv=(W-X0)*Math.min(v/e,1),wr=(W-X0)*Math.min(r/e,1);
+    const col=est[1]==='a'?ROJO:est[1]==='b'?'#8A6A20':VER;
+    return `<text x="0" y="${y+4}" font-size="11" fill="${T2}">${n}</text>
+      <line x1="${X0}" y1="${y}" x2="${W}" y2="${y}" stroke="#E7E2D5" stroke-width="9"/>
+      <line x1="${X0}" y1="${y}" x2="${X0+Math.max(wv,1.5)}" y2="${y}" stroke="${col}" stroke-width="9"/>
+      <line x1="${X0+wr}" y1="${y-8}" x2="${X0+wr}" y2="${y+8}" stroke="${INK}" stroke-width="1.1"/>
+      <text x="${W+8}" y="${y+4}" font-size="11" fill="${INK}">${vt}</text>`}).join('');
+  return `<svg class="viz" viewBox="-2 0 500 ${H}" role="img">${b}
+    <text x="${X0}" y="${H-2}" font-size="8.5" letter-spacing=".16em" fill="${T3}">BARRA · SU CIFRA    LÍNEA VERTICAL · LO RECOMENDABLE</text></svg>`;
+}
+
+/* ══ OBSERVACIONES ══ */
+function observar(k){
+  const o=[];
+  if(k.exc<0)o.push({t:'Cada mes sale más dinero del que entra',p:[
+   `El déficit es de ${C(-k.exc)} mensuales, ${C(-k.exc*12)} al año. Ninguna estrategia patrimonial funciona sobre un flujo negativo: la diferencia se cubre con deuda o vendiendo lo que se tiene, y ambos caminos empeoran la posición.`,
+   `Corregir esto antecede a cualquier otra decisión. No es una recomendación entre varias: es la condición para que las demás tengan sentido.`]});
+  if(k.aut!=null&&k.aut<3)o.push({t:'El problema real es la falta de reserva, no la deuda',p:[
+   `Con ${nf1.format(k.aut)} meses de autonomía, cualquier imprevisto —una reparación, una urgencia médica, un mes sin cliente— se paga forzosamente con tarjeta o con crédito, porque no hay de dónde más. La deuda que se observa es consecuencia de eso, no la enfermedad.`,
+   `Abonar a capital sin construir antes la reserva repite el ciclo: se cancela una deuda y nace otra al primer tropiezo. Lo primero es reunir tres meses de gastos, es decir ${C(k.egrMes*3)}, aunque eso signifique posponer el abono extraordinario.`]});
+  if(k.sT.length)o.push({t:'No se sabe cuánto cuesta la deuda',p:[
+   `${k.sT.length===1?'Una obligación':'Las '+k.sT.length+' obligaciones'} por ${C(sum(k.sT,x=>x.saldo))} figura${k.sT.length===1?'':'n'} sin tasa registrada, el ${P(sum(k.sT,x=>x.saldo)/k.tP)} del total adeudado. Sin ese dato no hay forma de saber cuál conviene pagar primero.`,
+   `El orden en que se pagan las deudas es lo que más incide en cuánto se termina pagando. Atacar primero una del 34% en vez de una del 18% puede significar varios millones de diferencia. Es el dato más rentable que existe y se consigue con una llamada por entidad.`]});
+  if(k.costo!=null&&k.costo>0.22)o.push({t:'La deuda cuesta más de lo que rinde cualquier inversión',p:[
+   `El costo promedio del pasivo es ${P(k.costo)} anual, lo que significa ${C(k.intAnual)} al año solo en intereses, antes de abonar un peso a capital. Ninguna inversión disponible en el mercado ofrece ese retorno de forma segura.`,
+   `De ahí se desprende algo contraintuitivo pero cierto: mientras exista esa deuda, pagarla es la mejor inversión posible. Rinde ${P(k.costo)} garantizado, sin riesgo y sin impuestos.`]});
+  if(k.ext&&k.ext.estanca)o.push({t:'Con las cuotas actuales, la deuda no se extingue',p:[
+   `Al ritmo de pago registrado, el saldo deja de bajar: la cuota apenas cubre los intereses. Puede pagar durante años sin que la deuda disminuya de forma apreciable.`,
+   `Se corrige aumentando la cuota de la obligación más cara, o refinanciando a una tasa menor. Es prioritario porque el tiempo, en este caso, no está trabajando a favor.`]});
+  if(k.partP!=null&&k.partP<0.10&&k.tA)o.push({t:'El patrimonio no está produciendo nada',p:[
+   `Los bienes que generan renta suman ${C(k.prod)}, el ${P(k.partP)} del total. El resto está inmovilizado o en cuentas que no rinden por encima de la inflación, lo que significa que pierde poder de compra cada año en silencio.`,
+   `Hablar de portafolios y de rentabilidad todavía es prematuro. Lo que corresponde ahora es generar el excedente que después hará posible esa conversación.`]});
+  if(k.concA!=null&&k.concA>0.5&&k.mayorA)o.push({t:'Una decisión de '+C(k.mayorA.valor)+' está pendiente',p:[
+   `La posición «${esc(k.mayorA.concepto)}» concentra el ${P(k.concA)} de todo lo que posee. Es, por mucho, la pieza más importante del balance y la única capaz de cambiar la situación de forma material.`,
+   `Su destino debe decidirse de manera consciente y quedar por escrito: reserva, cancelación de deuda cara, o traslado a un bien que produzca. No decidir también es decidir, y suele ser la opción más costosa.`]});
+  if(k.concI!=null&&k.concI>0.8)o.push({t:'Todo el ingreso depende de una sola fuente',p:[
+   `El ${P(k.concI)} de lo que entra proviene de ${esc(k.mayorP[0])}. No es un error de gestión, pero concentra el riesgo: si esa fuente se interrumpe, se interrumpe prácticamente todo.`,
+   `La reserva de emergencia cumple aquí una función doble: además de cubrir imprevistos, compra el tiempo necesario para reemplazar la fuente sin aceptar la primera opción que aparezca.`]});
+  if(k.ahorro!=null&&k.ahorro>=0.15)o.push({t:'La capacidad de ahorro es sólida',p:[
+   `Quedan ${C(k.exc)} libres cada mes, el ${P(k.ahorro)} del ingreso. Es una posición que permite construir patrimonio de forma sistemática y sostenida.`,
+   `El asunto deja de ser generar el excedente y pasa a ser darle destino. Un excedente sin asignación definida tiende a disolverse en consumo sin que nadie lo note.`]});
+  if(k.resp!=null&&k.resp<0.7)o.push({t:'Falta respaldo documental',p:[
+   `El ${P(1-k.resp)} de los bienes registrados no tiene soporte documental. Las conclusiones de este informe se apoyan en valores declarados, no verificados.`,
+   `Completar los soportes no es formalismo: es lo que separa un diagnóstico de una estimación, y lo que permite defender estas cifras ante un banco, un socio o una autoridad.`]});
+  return o.slice(0,6);
+}
+
+/* ══ DOCUMENTO ══ */
+/* rosetón guilloche paramétrico, como el de un certificado */
+function guilloche(){
+  const cx=200,cy=300,capas=[];
+  const curva=(R,a,k,ph,op,sw)=>{let d='';
+    for(let t=0;t<=720;t+=2){const r=(t*Math.PI)/360,rad=R+a*Math.cos(k*r+ph);
+      const x=(cx+rad*Math.cos(r)).toFixed(1),y=(cy+rad*Math.sin(r)*0.72).toFixed(1);
+      d+=(t===0?'M':'L')+x+' '+y}
+    return `<path d="${d}Z" fill="none" stroke="#C9BE99" stroke-width="${sw}" opacity="${op}"/>`};
+  for(let i=0;i<22;i++)capas.push(curva(58+i*7.4,15+i*0.5,7,i*0.11,0.85,0.35));
+  for(let i=0;i<14;i++)capas.push(curva(96+i*9.5,9,13,i*0.19,0.5,0.28));
+  for(let i=0;i<9;i++)capas.push(`<ellipse cx="${cx}" cy="${cy}" rx="${232+i*17}" ry="${168+i*13}" fill="none" stroke="#C9BE99" stroke-width=".22" opacity=".55"/>`);
+  return `<svg class="guil" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${capas.join('')}</svg>`;
+}
+
+const MS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const FF=s=>{if(!s)return '—';const [y,m,d]=s.split('-');return `${+d} de ${MS[+m-1]} de ${y}`};
+function est(v,ok,med,inv){if(v==null)return['—',''];const b=inv?v<=ok:v>=ok,m=inv?v<=med:v>=med;
+  return b?['Adecuado','c']:(m?['Atención','b']:['Crítico','a'])}
+
+const GLOSARIO=[
+ ['Activo','Todo lo que usted posee y tiene valor: cuentas, inversiones, inmuebles, vehículos.'],
+ ['Pasivo','Todo lo que debe a terceros: créditos, tarjetas, hipotecas.'],
+ ['Patrimonio neto','Lo que quedaría suyo si vendiera todo y pagara todas sus deudas. Es la cifra que mide su riqueza real.'],
+ ['Liquidez','El dinero disponible de inmediato, sin tener que vender nada ni perder valor al hacerlo.'],
+ ['Autonomía financiera','Cuántos meses podría sostener su nivel de vida si dejara de recibir ingresos hoy.'],
+ ['Tasa efectiva anual','Lo que cuesta una deuda en un año, incluyendo el efecto de los intereses sobre los intereses. Permite comparar créditos distintos entre sí.'],
+ ['Carga financiera','Qué porción de su ingreso mensual se va únicamente en pagar cuotas de deuda.'],
+ ['Excedente','Lo que sobra cada mes después de cubrir todos los gastos y todas las cuotas.'],
+ ['Tasa de ahorro','Qué porcentaje de lo que gana logra conservar cada mes.'],
+ ['Activo productivo','El bien que genera ingreso por sí mismo: un arriendo, un dividendo, un rendimiento.'],
+ ['Amortización','El abono que reduce el saldo de una deuda, distinto del pago de intereses.'],
+ ['Concentración','Qué tanto depende usted de una sola fuente de ingreso o de un solo bien. A mayor concentración, mayor fragilidad.']
+];
+
+function generar(){
+  const k=calc(),m=D.meta;
+  if(!k.tA&&!k.tP&&!k.ingMes){$('#vDoc').innerHTML='<div class="vacio"><p>Cargue al menos una posición en la pestaña de datos para generar el documento.</p></div>';return}
+  const obs=observar(k);
+  const secc=[['I','Síntesis'],['II','Balance patrimonial'],['III','Flujo mensual'],['IV','Estructura del pasivo'],
+    ['V','Indicadores'],['VI','Observaciones'],['VII','Requerimientos'],['VIII','Glosario'],['IX','Alcance'],['A','Anexo · Soportes']];
+  const sops=D.soportes.filter(s=>s.doc);
+  const enFirme=sops.filter(s=>s.estado==='Recibido'||s.estado==='Verificado').length;
+
+  const fAct=CLASES.filter(c=>k.pc[c]>0).map(c=>{
+    const it=k.a.filter(x=>x.clase===c).sort((x,y)=>y.valor-x.valor);
+    return `<tr class="sub"><td>${c}</td><td class="n">${C(k.pc[c])}</td><td class="n">${P(k.pc[c]/k.tA)}</td></tr>`+
+      it.map(x=>`<tr><td style="padding-left:14px">${esc(x.concepto)||'—'}<span class="s">${[x.entidad,x.ref,x.fecha?'valorado '+FF(x.fecha):null,x.soporte!=='Pendiente'?x.soporte:'sin soporte'].filter(Boolean).map(esc).join(' · ')}</span></td>
+        <td class="n">${C(x.valor)}</td><td class="n pend">${P(x.valor/k.tA)}</td></tr>`).join('')}).join('');
+  const fPas=k.p.slice().sort((x,y)=>y.saldo-x.saldo).map(p=>
+    `<tr><td>${esc(p.acreedor)||'—'}<span class="s">${[p.tipo,p.ref,p.garantia,p.meses?p.meses+' meses restantes':null].filter(Boolean).map(esc).join(' · ')}</span></td>
+     <td class="n">${C(p.saldo)}</td><td class="n${p.tasa==null?' pend':''}">${p.tasa==null?'Por establecer':nf1.format(p.tasa)+'%'}</td>
+     <td class="n${p.cuota==null?' pend':''}">${p.cuota==null?'—':C(p.cuota)}</td>
+     <td class="n pend">${P(p.saldo/k.tP)}</td></tr>`).join('');
+  const fIng=k.ing.slice().sort((x,y)=>y.valor/FACT[y.per]-x.valor/FACT[x.per]).map(i=>{const v=i.valor/FACT[i.per];
+    return `<tr><td>${esc(i.concepto)||'—'}<span class="s">${[i.fuente,i.nat,i.per!=='Mensual'?i.per+' · '+C(i.valor):null].filter(Boolean).map(esc).join(' · ')}</span></td>
+      <td class="n">${C(v)}</td><td class="n pend">${P(v/k.ingMes)}</td></tr>`}).join('');
+  const fEgr=k.catE.map(c=>{const it=k.egr.filter(e=>(e.cat||'Otros')===c.n);
+    return `<tr class="sub"><td>${esc(c.n)}</td><td class="n">${C(c.v)}</td><td class="n">${P(c.v/k.egrMes)}</td></tr>`+
+      it.map(e=>{const v=e.valor/FACT[e.per];
+        return `<tr><td style="padding-left:14px">${esc(e.concepto)||'—'}<span class="s">${[e.nat,e.per!=='Mensual'?e.per+' · '+C(e.valor):null].filter(Boolean).map(esc).join(' · ')}</span></td>
+        <td class="n">${C(v)}</td><td class="n pend">${P(v/k.egrMes)}</td></tr>`}).join('')}).join('')+
+    (k.cuotas?`<tr class="sub"><td>Cuotas de deuda</td><td class="n">${C(k.cuotas)}</td><td class="n">${P(k.cuotas/k.egrMes)}</td></tr>`:'');
+
+  const IND=[
+   ['Autonomía financiera','Meses que podría vivir sin ingreso',k.aut==null?'—':nf1.format(k.aut)+' meses','6,0 meses',est(k.aut,6,3),k.aut,6,false],
+   ['Tasa de ahorro','Cuánto conserva de lo que gana',k.ahorro==null?'—':P(k.ahorro),'≥ 15%',est(k.ahorro,.15,.05),k.ahorro,.15,false],
+   ['Carga financiera','Cuánto del ingreso se va en cuotas',k.carga==null?'—':P(k.carga),'≤ 20%',est(k.carga,.20,.30,true),k.carga,.20,true],
+   ['Endeudamiento','Cuánto de lo que posee está debido',k.endeud==null?'—':P(k.endeud),'≤ 40%',est(k.endeud,.40,.70,true),k.endeud,.40,true],
+   ['Costo de la deuda','Tasa promedio que paga al año',k.costo==null?'Por establecer':P(k.costo),'≤ 20%',k.costo==null?['—','']:est(k.costo,.20,.30,true),k.costo,.20,true],
+   ['Patrimonio productivo','Cuánto de lo suyo genera renta',k.partP==null?'—':P(k.partP),'≥ 30%',est(k.partP,.30,.10),k.partP,.30,false],
+   ['Concentración del ingreso','Peso de su principal fuente',k.concI==null?'—':P(k.concI),'≤ 80%',est(k.concI,.80,.95,true),k.concI,.80,true]];
+
+  const PEND=[[k.sT.length>0,'Tasa efectiva anual de las obligaciones pendientes','Extracto mensual o llamada a la entidad','Alta'],
+   [k.p.some(p=>p.cuota==null),'Cuota mensual y plazo de cada crédito','Desprendible de pago o extracto','Alta'],
+   [k.resp!=null&&k.resp<1,'Soporte documental de las posiciones sin respaldo','Extractos, certificados y avalúos','Alta'],
+   [!k.egr.length,'Composición real del gasto mensual','Clasificación de movimientos bancarios','Alta'],
+   [!k.a.some(a=>a.clase==='Bien raíz'),'Valoración de bienes inmuebles','Avalúo comercial o comparables de mercado','Complementaria'],
+   [!k.a.some(a=>a.clase==='Productivo'),'Valoración de activos productivos','Comparables de zona o avalúo','Complementaria'],
+   [true,'Movimientos bancarios de los últimos seis meses','Exportación desde banca virtual','Alta']].filter(x=>x[0]);
+
+  $('#vDoc').innerHTML=`
+  <div class="cover">
+    ${guilloche()}
+    <div class="c-top"><div class="c-mark">${esc(m.marca)}<em>${esc(m.marcaSub)}</em></div>
+      <div class="c-conf">Documento confidencial<br>Uso exclusivo del titular</div></div>
+    <div class="c-mid"><p class="c-kick">Estado de Situación Patrimonial</p>
+      <h1>${esc(m.titular||'—')}</h1><div class="dbl"><i></i><i></i></div>
+      <h2>${esc(m.subtitulo)}</h2></div>
+    <div>
+      <dl class="c-sum">
+        <div><dt>Patrimonio neto</dt><dd${k.neto<0?' style="color:#C98B84"':''}>${Cs(k.neto)}</dd></div>
+        <div><dt>Lo que posee</dt><dd>${Cs(k.tA)}</dd></div>
+        <div><dt>Lo que debe</dt><dd>${Cs(k.tP)}</dd></div>
+        <div><dt>Le queda al mes</dt><dd${k.exc<0?' style="color:#C98B84"':''}>${!k.ingMes&&!k.egrMes?'—':Cs(k.exc)}</dd></div>
+      </dl>
+      <dl class="c-foot">
+        <div><dt>Titular</dt><dd>${esc(m.documento)||'—'}</dd></div>
+        <div><dt>Fecha de corte</dt><dd>${FF(m.corte)}</dd></div>
+        <div><dt>Fuente</dt><dd>${esc(m.fuente)||'—'}</dd></div>
+        <div><dt>Emisión</dt><dd>${FF(HOY)}</dd></div>
+      </dl></div>
+  </div>
+
+  <div class="doc">
+  <div class="toc">
+    <div><h3>Contenido</h3>${secc.map(([r,t])=>`<div class="toc-i"><span class="r">${r}</span><span class="t">${t}</span><span class="d"></span></div>`).join('')}</div>
+    <div class="leer"><h3>Cómo leer este documento</h3>
+      <p>Está escrito para que lo entienda cualquiera, tenga o no formación financiera. Cada sección técnica va acompañada de una explicación en lenguaje corriente, señalada como <b>en palabras simples</b>.</p>
+      <p>Las cifras corresponden a un día concreto, el <b>${FF(m.corte)}</b>. Son una fotografía, no una película: describen dónde está usted hoy, no hacia dónde va.</p>
+      <p>El documento no recomienda productos ni inversiones. Establece el punto de partida. Las decisiones vienen después, y se toman sobre este piso.</p>
+      <p>Al final encontrará un <b>glosario</b> con los doce términos que aparecen en el texto, explicados sin tecnicismos.</p>
+    </div>
+  </div>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">I — Síntesis</span><h3>Dónde está usted hoy</h3></div>
+    <div class="heroes">
+      <div class="hero"><span class="l sc">Lo que posee</span><span class="v">${CH(k.tA)}</span><span class="m">${k.a.length} bienes registrados</span></div>
+      <div class="hero"><span class="l sc">Lo que debe</span><span class="v">${CH(k.tP)}</span><span class="m">${k.p.length} obligaciones</span></div>
+      <div class="hero"><span class="l sc">Patrimonio neto</span><span class="v${k.neto<0?' neg':''}">${CH(k.neto)}</span><span class="m">${k.neto>=0?'Lo que es realmente suyo':'Debe más de lo que posee'}</span></div>
+      <div class="hero"><span class="l sc">${!k.ingMes&&!k.egrMes?'Flujo mensual':k.exc>=0?'Le queda al mes':'Le falta al mes'}</span>
+        <span class="v${k.exc<0?' neg':''}" style="${!k.ingMes&&!k.egrMes?'font-size:19px;color:var(--tinta3)':''}">${!k.ingMes&&!k.egrMes?'Sin registrar':CH(k.exc)}</span>
+        <span class="m">${!k.ingMes&&!k.egrMes?'Falta cargar ingresos y gastos':k.ahorro==null?'—':P(k.ahorro)+' de lo que gana'}</span></div>
+    </div>
+    <div class="cols"><div>
+      <p class="lead">Al ${FF(m.corte)} su patrimonio neto es de ${C(k.neto)}: posee ${C(k.tA)} y debe ${C(k.tP)}. Dispone de ${C(k.liq)} en efectivo o equivalente${k.aut!=null?`, lo que le permitiría sostener su nivel de vida durante ${nf1.format(k.aut)} meses si dejara de recibir ingresos`:''}.</p>
+      <p>${!k.ingMes&&!k.egrMes
+        ?'No se registró información de ingresos ni de gastos mensuales, de modo que este informe describe únicamente la posición patrimonial. Sin el flujo mensual no puede establecerse la autonomía financiera ni la capacidad de ahorro, que son las dos preguntas centrales de cualquier plan.'
+        :!k.ingMes
+        ?`No se registraron ingresos. Con salidas por ${C(k.egrMes)} al mes, completar la información de lo que entra es indispensable para que las conclusiones tengan sentido.`
+        :`Cada mes entran ${C(k.ingMes)} y salen ${C(k.egrMes)}, de modo que ${k.exc>=0?'le quedan':'le faltan'} ${C(Math.abs(k.exc))}.`}
+      ${k.tA?` Del total de lo que posee, el ${P(k.partP||0)} genera renta por sí mismo${k.resp!=null?`, y el ${P(k.resp)} cuenta con soporte documental`:''}.`:''}</p>
+      ${k.aut!=null?`<figure><figcaption>Su colchón frente a lo recomendable</figcaption>${gReserva(k)}
+        <p class="fn">La regla más aceptada en planeación financiera es tener guardado el equivalente a seis meses de gastos. No es una meta de riqueza: es lo que impide que un imprevisto se convierta en una deuda.</p></figure>`:''}
+    </div><div class="aside"><h5>Nota</h5>
+      <p><b>Patrimonio neto</b> es lo que quedaría suyo si vendiera todo y pagara todas sus deudas.</p>
+      <p><b>Liquidez</b> es el dinero al que puede acceder mañana sin vender nada ni perder valor.</p>
+      <p>Todas las cifras están expresadas en pesos del día del corte.</p></div></div>
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">II — Balance</span><h3>Qué posee y quién lo financia</h3></div>
+    <figure><figcaption>Cómo se reparte lo que posee</figcaption>${gDona(k)}</figure>
+    <figure><figcaption>Quién es dueño de qué</figcaption>${gBalance(k)}</figure>
+    <div class="simple"><span>En palabras simples</span>
+      <p>La primera barra muestra todo lo que usted tiene, dividido por tipo. La segunda muestra la misma cantidad, pero repartida entre lo que en el fondo pertenece a los bancos y lo que es realmente suyo. Mientras más grande sea la porción oscura, más independiente es su posición.</p></div>
+    <table class="rep"><caption>Detalle de lo que posee</caption>
+      <thead><tr><th style="width:56%">Bien o posición</th><th class="n" style="width:26%">Valor</th><th class="n" style="width:18%">Peso</th></tr></thead>
+      <tbody>${fAct||'<tr><td colspan="3" class="pend">Sin bienes registrados.</td></tr>'}
+      <tr class="sum"><td>Total</td><td class="n">${C(k.tA)}</td><td class="n">100%</td></tr></tbody></table>
+    <table class="rep"><caption>Detalle de lo que debe</caption>
+      <thead><tr><th style="width:36%">Acreedor</th><th class="n" style="width:19%">Saldo</th><th class="n" style="width:14%">Tasa año</th><th class="n" style="width:17%">Cuota mes</th><th class="n" style="width:14%">Peso</th></tr></thead>
+      <tbody>${fPas||'<tr><td colspan="5" class="pend">Sin obligaciones registradas.</td></tr>'}
+      <tr class="sum"><td>Total</td><td class="n">${C(k.tP)}</td><td class="n"></td><td class="n">${C(k.cuotas)}</td><td class="n">100%</td></tr></tbody></table>
+    <table class="rep"><tbody><tr class="sum"><td style="width:60%">Patrimonio neto · lo que es suyo</td>
+      <td class="n"${k.neto<0?' style="color:#78302A"':''}>${C(k.neto)}</td></tr></tbody></table>
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">III — Flujo</span><h3>Qué entra y qué sale cada mes</h3></div>
+    <figure><figcaption>Del ingreso a lo que le queda</figcaption>${gCascada(k)}
+      <p class="fn">La primera columna es todo lo que entra. Cada columna siguiente descuenta un grupo de gastos. La última es lo que permanece al cerrar el mes. Bajo cada columna se indica qué porcentaje del ingreso representa.</p></figure>
+    <div class="cols"><div>
+      <table class="rep"><caption>Lo que entra</caption>
+        <thead><tr><th style="width:54%">Concepto</th><th class="n" style="width:27%">Al mes</th><th class="n" style="width:19%">Peso</th></tr></thead>
+        <tbody>${fIng||'<tr><td colspan="3" class="pend">Sin ingresos registrados.</td></tr>'}
+        <tr class="sum"><td>Total</td><td class="n">${C(k.ingMes)}</td><td class="n">100%</td></tr></tbody></table>
+      <table class="rep"><caption>Lo que sale</caption>
+        <thead><tr><th style="width:54%">Concepto</th><th class="n" style="width:27%">Al mes</th><th class="n" style="width:19%">Peso</th></tr></thead>
+        <tbody>${fEgr||'<tr><td colspan="3" class="pend">Sin egresos registrados.</td></tr>'}
+        <tr class="sum"><td>Total</td><td class="n">${C(k.egrMes)}</td><td class="n">100%</td></tr></tbody></table>
+      <table class="rep"><tbody>
+        <tr class="sum"><td style="width:60%">${k.exc>=0?'Le queda cada mes':'Le falta cada mes'}</td><td class="n"${k.exc<0?' style="color:#78302A"':''}>${C(k.exc)}</td></tr>
+        <tr class="sum"><td>Equivalente en un año</td><td class="n"${k.exc<0?' style="color:#78302A"':''}>${C(k.exc*12)}</td></tr></tbody></table>
+    </div><div class="aside"><h5>Nota</h5>
+      <p>Los valores que no se reciben ni se pagan mensualmente se convierten a su equivalente por mes, para poder compararlos entre sí.</p>
+      <p>Una prima semestral de $6.000.000 aparece aquí como $1.000.000 al mes.</p>
+      <p>Las cuotas de deuda se toman de la tabla de obligaciones y no se repiten en los gastos.</p></div></div>
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">IV — Deuda</span><h3>Cuánto cuesta y en qué orden pagarla</h3></div>
+    ${k.orden.length?`
+    <figure><figcaption>Cuánto le cuesta cada deuda al año</figcaption>${gInteres(k)}
+      <p class="fn">La barra mide los intereses que genera cada obligación en un año, antes de abonar a capital. La primera, en rojo, es la que debe pagarse primero: no la de mayor saldo, sino la de mayor tasa.</p></figure>
+    <div class="simple"><span>En palabras simples</span>
+      <p>Pagar primero la deuda más cara ahorra más dinero que pagar primero la más pequeña, aunque cancelar una deuda pequeña se sienta mejor. Cada peso abonado a la primera de la lista le rinde ${P(k.orden[0].tasa/100)} anual garantizado, que es más de lo que ofrece cualquier inversión segura.</p></div>
+    <table class="rep"><thead><tr><th style="width:11%">Orden</th><th style="width:31%">Acreedor</th><th class="n" style="width:14%">Tasa año</th><th class="n" style="width:22%">Saldo</th><th class="n" style="width:22%">Intereses al año</th></tr></thead>
+      <tbody>${k.orden.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.acreedor)}</td><td class="n">${nf1.format(p.tasa)}%</td><td class="n">${C(p.saldo)}</td><td class="n">${C(p.saldo*p.tasa/100)}</td></tr>`).join('')}
+      <tr class="sum"><td colspan="3">Total con tasa conocida</td><td class="n">${C(sum(k.orden,x=>x.saldo))}</td><td class="n">${C(k.intAnual)}</td></tr></tbody></table>
+    <p>El costo promedio de su deuda es de <strong>${P(k.costo)}</strong> al año, equivalente a ${C(k.intAnual)} anuales solo en intereses.</p>`
+    :`<p>No es posible establecer el orden de pago porque ninguna obligación tiene tasa registrada. Es la información más rentable que puede conseguir y requiere una llamada por entidad.</p>`}
+    ${k.ext&&k.ext.serie.length>2?`<figure><figcaption>${k.ext.estanca?'La deuda no disminuye al ritmo actual':'Cuándo quedaría libre de deudas'}</figcaption>${gExtincion(k)}
+      <p class="fn">${k.ext.estanca?'Con las cuotas registradas el saldo deja de bajar: el pago apenas cubre los intereses. Conviene aumentar la cuota de la obligación más cara o refinanciar a menor tasa.':`Manteniendo las cuotas actuales y sin adquirir nuevas obligaciones, quedaría libre de deudas en ${k.ext.meses} meses, es decir ${nf1.format(k.ext.meses/12)} años.`}</p></figure>`:''}
+    ${k.sT.length?`<p>Quedan sin tasa registrada ${k.sT.length} ${k.sT.length===1?'obligación':'obligaciones'} por ${C(sum(k.sT,x=>x.saldo))}, el ${P(sum(k.sT,x=>x.saldo)/k.tP)} de lo que debe.</p>`:''}
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">V — Indicadores</span><h3>Su posición frente a lo recomendable</h3></div>
+    <figure><figcaption>Comparación con los estándares de planeación financiera</figcaption>${gIndic(IND)}</figure>
+    <table class="rep"><thead><tr><th style="width:42%">Indicador</th><th class="n" style="width:19%">Su cifra</th><th class="n" style="width:19%">Recomendable</th><th class="st" style="width:20%">Estado</th></tr></thead>
+      <tbody>${IND.map(x=>`<tr><td>${x[0]}<span class="s">${x[1]}</span></td><td class="n">${x[2]}</td><td class="n pend">${x[3]}</td><td class="st ${x[4][1]}">${x[4][0]}</td></tr>`).join('')}</tbody></table>
+    <p class="fn">Las referencias corresponden a estándares generales de planeación financiera personal. No son normas obligatorias y admiten excepciones justificadas según la etapa de vida y el perfil de cada persona.</p>
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">VI — Observaciones</span><h3>Lo que dicen estas cifras</h3></div>
+    ${obs.length?obs.map((o,i)=>`<div class="obs"><span class="i">${String(i+1).padStart(2,'0')}</span><div><h4>${o.t}</h4>${o.p.map(x=>`<p>${x}</p>`).join('')}</div></div>`).join('')
+     :'<p>Los indicadores se encuentran dentro de los rangos recomendables. No se identifican situaciones que requieran corrección inmediata.</p>'}
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">VII — Requerimientos</span><h3>Lo que falta para completar el diagnóstico</h3></div>
+    <div style="border-top:1px solid var(--tinta)">
+    ${PEND.map((x,i)=>`<div class="pl"><span class="n">${String(i+1).padStart(2,'0')}</span><span class="t">${x[1]}<span>${x[2]}</span></span><span class="w">${x[3]}</span></div>`).join('')}</div>
+  </section>
+
+  <section class="brk">
+    <div class="shead"><span class="snum">VIII — Glosario</span><h3>Los términos, sin tecnicismos</h3></div>
+    <dl class="glos">${GLOSARIO.map(([t,d])=>`<div class="gi"><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">IX — Alcance</span><h3>Metodología y limitaciones</h3></div>
+    <div class="method">
+      <p>Las cifras corresponden a la posición del titular al ${FF(m.corte)} y constituyen una observación puntual a esa fecha, no un promedio del período. Fuente: ${esc(m.fuente)||'información aportada por el titular'}.</p>
+      <p>Los valores de periodicidad distinta a la mensual se convierten a su equivalente por mes dividiendo entre el número de meses del período. Ello permite comparar partidas de distinta frecuencia sobre una base uniforme, pero no refleja la estacionalidad real del desembolso.</p>
+      <p>La proyección de extinción de deuda supone que las cuotas se mantienen constantes, que no se adquieren nuevas obligaciones y que las tasas no varían. Es un escenario de referencia, no un pronóstico.</p>
+      <p>La ausencia de un concepto en este documento no acredita su inexistencia. Las posiciones no registradas quedan excluidas del balance y, por tanto, del patrimonio neto consignado.</p>
+      <p>Los indicadores se calculan sobre las cifras cargadas sin ajuste ni depuración, y no han sido verificados contra documentos soporte salvo en las posiciones donde así se indica.</p>
+      <p>Este documento constituye un ejercicio de diagnóstico patrimonial y planeación financiera. No configura asesoría de inversión ni recomendación sobre instrumentos, emisores o productos financieros determinados, ni sustituye el concepto de un profesional certificado para tal efecto.</p>
+    </div>
+  </section>
+
+  ${sops.length?`<section class="brk">
+    <div class="shead"><span class="snum">Anexo — Soportes</span><h3>Documentos que respaldan estas cifras</h3></div>
+    <p>Se relacionan a continuación los soportes documentales asociados a la información consignada. ${enFirme} de ${sops.length} se encuentran en firme.</p>
+    <table class="rep"><thead><tr><th style="width:38%">Documento</th><th style="width:17%">Tipo</th><th style="width:23%">Entidad</th><th class="n" style="width:22%">Estado</th></tr></thead>
+      <tbody>${sops.map(s=>`<tr><td>${esc(s.doc)}<span class="s">${s.fecha?FF(s.fecha):'sin fecha'}</span></td>
+        <td>${esc(s.tipo)}</td><td>${esc(s.entidad)||'—'}</td>
+        <td class="st ${s.estado==='Verificado'?'c':s.estado==='Recibido'?'c':s.estado==='Solicitado'?'b':'a'}">${esc(s.estado)}</td></tr>`).join('')}</tbody></table>
+    <p class="fn">Los documentos originales se conservan en el expediente del titular. Esta relación deja constancia de su existencia y de su estado de verificación a la fecha de corte.</p>
+  </section>`:''}
+
+  <div class="colofon"><div class="m">${esc(m.marca)}</div>
+    <div class="s">Documento confidencial · ${FF(m.corte)}</div></div>
+  </div>`;
+}
+
+/* ══ NAVEGACIÓN ══ */
+function ver(doc){
+  if(doc)generar();
+  $('#vDatos').classList.toggle('hide',doc);$('#vDoc').classList.toggle('hide',!doc);
+  $('#tabDatos').setAttribute('aria-pressed',String(!doc));$('#tabDoc').setAttribute('aria-pressed',String(doc));
+  try{window.scrollTo(0,0)}catch(e){}
+}
+$('#tabDatos').addEventListener('click',()=>ver(false));
+$('#tabDoc').addEventListener('click',()=>ver(true));
+$('#btGen').addEventListener('click',()=>ver(true));
+$('#btPrint').addEventListener('click',()=>{ver(true);setTimeout(()=>window.print(),320)});
+$('#btExp').addEventListener('click',()=>{const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='patrimonio_'+(D.meta.corte||'')+'.json';a.click();URL.revokeObjectURL(a.href)});
+$('#btImp').addEventListener('click',()=>$('#fileImp').click());
+$('#fileImp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);['meta','activos','pasivos','ingresos','egresos','soportes'].forEach(x=>{if(o[x])D[x]=o[x]});
+    pintarMeta();pintarTablas();ver(false)}catch(err){alert('El archivo no pudo leerse.')}};
+  r.readAsText(f);e.target.value=''});
+
+pintarMeta();pintarTablas();
+})();
+</script>
+</body>
+</html>
