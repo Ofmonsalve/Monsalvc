@@ -575,6 +575,10 @@ function calc(){
   const intAnual=sum(cT,x=>x.saldo*x.tasa/100);
   const orden=cT.slice().sort((x,y)=>y.tasa-x.tasa);
   const mayorA=a.slice().sort((x,y)=>y.valor-x.valor)[0]||null;
+  const REASIG=['Líquido','Inversión','Por cobrar'];
+  const reasig=a.filter(x=>REASIG.includes(x.clase));
+  const mayorR=reasig.slice().sort((x,y)=>y.valor-x.valor)[0]||null;
+  const totalR=sum(reasig,x=>x.valor);
   const pp={};ing.forEach(i=>{const q=i.fuente||'Sin identificar';pp[q]=(pp[q]||0)+i.valor/FACT[i.per]});
   const mayorP=Object.entries(pp).sort((x,y)=>y[1]-x[1])[0]||['—',0];
   const cSop=a.filter(x=>x.soporte&&x.soporte!=='Pendiente');
@@ -583,6 +587,8 @@ function calc(){
     aut:egrMes?liq/egrMes:null,ahorro:ingMes?exc/ingMes:null,carga:ingMes?cuotas/ingMes:null,
     endeud:tA?tP/tA:null,costo,intAnual,sT,cT,orden,mayorA,mayorP,
     concI:ingMes?mayorP[1]/ingMes:null,concA:tA&&mayorA?mayorA.valor/tA:null,
+    mayorR,totalR,concR:totalR&&mayorR?mayorR.valor/totalR:null,
+    vivienda:sum(a.filter(x=>x.clase==='Uso personal'||x.clase==='Bien raíz'),x=>x.valor),
     partP:tA?prod/tA:null,resp:a.length?cSop.length/a.length:null,
     ext:extincion(p)};
 }
@@ -840,12 +846,12 @@ function observar(k){
   if(k.ext&&k.ext.estanca)o.push({t:'Con las cuotas actuales, la deuda no se extingue',p:[
    `Al ritmo de pago registrado, el saldo deja de bajar: la cuota apenas cubre los intereses. Puede pagar durante años sin que la deuda disminuya de forma apreciable.`,
    `Se corrige aumentando la cuota de la obligación más cara, o refinanciando a una tasa menor. Es prioritario porque el tiempo, en este caso, no está trabajando a favor.`]});
-  if(k.partP!=null&&k.partP<0.10&&k.tA)o.push({t:'El patrimonio no está produciendo nada',p:[
-   `Los bienes que generan renta suman ${C(k.prod)}, el ${P(k.partP)} del total. El resto está inmovilizado o en cuentas que no rinden por encima de la inflación, lo que significa que pierde poder de compra cada año en silencio.`,
-   `Hablar de portafolios y de rentabilidad todavía es prematuro. Lo que corresponde ahora es generar el excedente que después hará posible esa conversación.`]});
-  if(k.concA!=null&&k.concA>0.5&&k.mayorA)o.push({t:'Una decisión de '+C(k.mayorA.valor)+' está pendiente',p:[
-   `La posición «${esc(k.mayorA.concepto)}» concentra el ${P(k.concA)} de todo lo que posee. Es, por mucho, la pieza más importante del balance y la única capaz de cambiar la situación de forma material.`,
-   `Su destino debe decidirse de manera consciente y quedar por escrito: reserva, cancelación de deuda cara, o traslado a un bien que produzca. No decidir también es decidir, y suele ser la opción más costosa.`]});
+  if(k.partP!=null&&k.partP<0.10&&k.tA)o.push({t:'El patrimonio no genera ingreso',p:[
+   `Los bienes que producen renta suman ${C(k.prod)}, el ${P(k.partP)} del total.${k.vivienda>0?` El inmueble de uso propio representa ${P(k.vivienda/k.tA)} del patrimonio: es un activo legítimo y le ahorra un arriendo, pero no deposita dinero en su cuenta ni se puede vender por partes.`:''} El resto está en cuentas que no rinden por encima de la inflación, de modo que pierde poder de compra cada año en silencio.`,
+   `Ello no significa que la posición sea mala, sino que el patrimonio depende enteramente de que usted siga trabajando. Construir una porción que genere ingreso propio es lo que convierte el patrimonio en independencia.`]});
+  if(k.concR!=null&&k.concR>0.6&&k.mayorR&&k.totalR>0)o.push({t:'Una decisión de '+C(k.mayorR.valor)+' está pendiente',p:[
+   `La posición «${esc(k.mayorR.concepto)}» concentra el ${P(k.concR)} del capital que usted puede mover libremente. Es la pieza con mayor capacidad de cambiar la situación descrita, porque a diferencia de un inmueble sí admite reasignación inmediata.`,
+   `Su destino debe decidirse de manera consciente y quedar por escrito: reserva de emergencia, cancelación de deuda cara, o traslado a un bien que produzca renta. No decidir también es decidir, y suele ser la opción más costosa.`]});
   if(k.concI!=null&&k.concI>0.8)o.push({t:'Todo el ingreso depende de una sola fuente',p:[
    `El ${P(k.concI)} de lo que entra proviene de ${esc(k.mayorP[0])}. No es un error de gestión, pero concentra el riesgo: si esa fuente se interrumpe, se interrumpe prácticamente todo.`,
    `La reserva de emergencia cumple aquí una función doble: además de cubrir imprevistos, compra el tiempo necesario para reemplazar la fuente sin aceptar la primera opción que aparezca.`]});
